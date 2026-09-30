@@ -392,8 +392,12 @@ body.lb-lock{overflow:hidden}
     // 新品视图下是纯清单、无分类，类型筛选只在「全部情报」视图生效
     if (state.type !== '全部' && c.dataset.type !== state.type) return false;
     if (state.rel === '高' && c.dataset.rel !== '高') return false;
-    // 「只看未读」由未读模块拨动 state.unread；已读与否写在卡片的 .read 类上
-    if (state.unread && c.classList.contains('read')) return false;
+    // 「只看未读」由未读模块拨动 state.unread，只保留「本日新出现」且还没读过的卡。
+    // 两个条件都得判：只判 .read 的话，data-first="0" 的旧闻卡既不算未读、也不会被
+    // 标上 .read，会永远赖在列表里（实测 27 张未读旁边还挂着 9 张旧闻，筛完数量和
+    // 顶栏未读胶囊对不上）。总览页不渲染未读组件，state.unread 恒为 false，不受影响。
+    if (state.unread && (c.dataset.first !== '1' || c.classList.contains('read')))
+      return false;
     var t = (q.value || '').trim().toLowerCase();
     if (t && (c.dataset.search || '').indexOf(t) === -1) return false;
     return true;
