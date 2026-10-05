@@ -33,6 +33,26 @@ h1{margin:0 0 6px;font-size:22px;letter-spacing:.2px}
   padding:3px 11px;font-size:12.5px;color:var(--ink2)}
 .stat span b{color:var(--ink);font-weight:600}
 
+/* 日期时间线：读完一天直接翻到前一天 / 后一天 */
+.daynav{display:flex;flex-wrap:wrap;align-items:center;gap:7px;
+  margin:0 0 13px;padding-bottom:11px;border-bottom:1px dashed var(--line)}
+.dn-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink2);border-radius:8px;padding:4px 10px;
+  font-size:12.5px;white-space:nowrap;cursor:pointer;transition:.12s}
+.dn-btn:hover{border-color:var(--accent);color:var(--accent);
+  background:var(--accent-soft);text-decoration:none}
+.dn-btn .dn-ar{font-size:14px;line-height:1;opacity:.75}
+.dn-btn .dn-w{color:var(--ink3);font-size:11.5px}
+.dn-btn.off{opacity:.45;cursor:not-allowed;background:var(--bg)}
+.dn-btn.off:hover{border-color:var(--line);color:var(--ink2);background:var(--bg)}
+.dn-sel{border:1px solid var(--line);background:var(--bg);color:var(--ink);
+  border-radius:8px;padding:4px 8px;font-size:12.5px;font-family:inherit;
+  cursor:pointer;max-width:200px}
+.dn-sel:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.dn-pos{font-size:12px;color:var(--ink3);white-space:nowrap}
+.dn-idx{margin-left:auto;font-size:12.5px;white-space:nowrap}
+.dn-hint{font-size:11.5px;color:var(--ink3);white-space:nowrap;opacity:.85}
+
 /* 控件 */
 .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
   margin-top:14px;padding-bottom:12px}
@@ -255,17 +275,24 @@ body.lb-lock{overflow:hidden}
   .unreadbar .ub-t{flex:1 1 100%}
   .unreadbar .sp{display:none}
   .ubtn{flex:1 1 auto;text-align:center}
+  /* 窄屏：星期与键盘提示先让位，保证上一期 / 下一期两个按钮不换行 */
+  .dn-btn .dn-w{display:none}
+  .dn-hint{display:none}
+  .dn-idx{margin-left:0}
+  .dn-sel{max-width:150px}
 }
 @media print{
   .unreadbar{display:none}
+  .daynav{display:none}
   .top{position:static}.controls{display:none}
   body{background:#fff}.card{break-inside:avoid;box-shadow:none}
 }
 </style>
 </head>
-<body class="view-new"><div style="display:flex;align-items:center;gap:12px;padding:9px 18px;background:#1f2430;color:#fff;font:13px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif"><span style="font-weight:600">手办情报 · 每日更新</span><span style="opacity:.72">2026-10-02</span><a href="archive.html" style="margin-left:auto;color:#9ecbff;text-decoration:none">历史归档 →</a></div>
+<body class="view-new"><div style="display:flex;align-items:center;gap:12px;padding:9px 18px;background:#1f2430;color:#fff;font:13px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif"><span style="font-weight:600">手办情报 · 每日更新</span><span style="opacity:.72">2026-10-02 周五</span><span style="opacity:.55">第 3 / 5 期</span><a href="archive.html" style="margin-left:auto;color:#9ecbff;text-decoration:none">历史归档 →</a></div>
 <header class="top">
   <div class="wrap inner">
+    <nav class="daynav" id="daynav" aria-label="日期时间线" data-prev="2026-10-01.html" data-next="2026-10-03.html"><a class="dn-btn" href="2026-10-01.html" rel="prev" title="上一期 2026-10-01（周四）"><span class="dn-ar">‹</span><span class="dn-t">10-01</span><span class="dn-w">周四</span></a><select class="dn-sel" id="dn-sel" aria-label="跳转到指定日期"><option value="2026-09-30.html">2026-09-30（周三）· 第 1 期</option><option value="2026-10-01.html">2026-10-01（周四）· 第 2 期</option><option value="2026-10-02.html" selected>2026-10-02（周五）· 第 3 期</option><option value="2026-10-03.html">2026-10-03（周六）· 第 4 期</option><option value="2026-10-05.html">2026-10-05（周一）· 第 5 期</option></select><a class="dn-btn" href="2026-10-03.html" rel="next" title="下一期 2026-10-03（周六）"><span class="dn-t">10-03</span><span class="dn-w">周六</span><span class="dn-ar">›</span></a><span class="dn-pos">第 3 / 5 期</span><a class="dn-idx" href="archive.html">全部日期 →</a><span class="dn-hint">键盘 [ ] 翻日期</span></nav>
     <h1>手办 / 可动人偶情报　<span style="font-size:15px;color:#8b95a3;font-weight:400">2026-10-02</span></h1>
     <div class="sub">从 36 条粗筛候选中提取</div>
     <div class="stat"><span id="un-pill-wrap" style="background:#eaf1fe;border-color:#c9d8f5;color:#2f6fed">📬 未读 <b id="un-pill">24</b></span><span>共 <b>31</b> 条情报</span><span>其中新品清单 <b>27</b> 条</span><span>其中 <b>14</b> 条高相关</span><span>新品公布 <b>24</b></span><span>开订 <b>1</b></span><span>发售 <b>1</b></span><span>展会 <b>2</b></span><span>实物测评 <b>3</b></span><span>生成于 2026-10-02 12:11</span></div>
@@ -774,6 +801,27 @@ body.lb-lock{overflow:hidden}
 
   paint();
   syncFilter();
+})();
+
+/* 日期时间线：读完一天直接翻到相邻一天（下拉任选 / 键盘 [ ]） */
+(function(){
+  var nav = document.getElementById('daynav');
+  if (!nav) return;
+  var prev = nav.getAttribute('data-prev') || '';
+  var next = nav.getAttribute('data-next') || '';
+  var sel  = document.getElementById('dn-sel');
+  if (sel) sel.addEventListener('change', function(){
+    if (sel.value) location.href = sel.value;
+  });
+  document.addEventListener('keydown', function(e){
+    // 放大预览开着时把键盘让给它（它用 ←/→ 翻图）
+    if (document.body.classList.contains('lb-lock')) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var a = document.activeElement, tag = a ? a.tagName : '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    if (e.key === '['){ if (!prev) return; e.preventDefault(); location.href = prev; }
+    if (e.key === ']'){ if (!next) return; e.preventDefault(); location.href = next; }
+  });
 })();
 </script>
 </body>
