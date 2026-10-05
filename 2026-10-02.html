@@ -52,6 +52,13 @@ h1{margin:0 0 6px;font-size:22px;letter-spacing:.2px}
 .dn-pos{font-size:12px;color:var(--ink3);white-space:nowrap}
 .dn-idx{margin-left:auto;font-size:12.5px;white-space:nowrap}
 .dn-hint{font-size:11.5px;color:var(--ink3);white-space:nowrap;opacity:.85}
+/* 页脚翻页条：长页面读完在底部，就地翻到相邻一期 */
+.dayfoot{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  gap:9px;margin:14px 0 0;padding:18px 0 6px;border-top:1px solid var(--line)}
+.dayfoot .df-t{font-size:12.5px;color:var(--ink3)}
+.dayfoot .dn-btn{padding:7px 15px;font-size:13px}
+.dn-btn.dn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.dn-btn.dn-primary:hover{background:#2560d8;border-color:#2560d8;color:#fff}
 
 /* 控件 */
 .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
@@ -284,6 +291,7 @@ body.lb-lock{overflow:hidden}
 @media print{
   .unreadbar{display:none}
   .daynav{display:none}
+  .dayfoot{display:none}
   .top{position:static}.controls{display:none}
   body{background:#fff}.card{break-inside:avoid;box-shadow:none}
 }
@@ -292,7 +300,7 @@ body.lb-lock{overflow:hidden}
 <body class="view-new"><div style="display:flex;align-items:center;gap:12px;padding:9px 18px;background:#1f2430;color:#fff;font:13px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif"><span style="font-weight:600">手办情报 · 每日更新</span><span style="opacity:.72">2026-10-02 周五</span><span style="opacity:.55">第 3 / 5 期</span><a href="archive.html" style="margin-left:auto;color:#9ecbff;text-decoration:none">历史归档 →</a></div>
 <header class="top">
   <div class="wrap inner">
-    <nav class="daynav" id="daynav" aria-label="日期时间线" data-prev="2026-10-01.html" data-next="2026-10-03.html"><a class="dn-btn" href="2026-10-01.html" rel="prev" title="上一期 2026-10-01（周四）"><span class="dn-ar">‹</span><span class="dn-t">10-01</span><span class="dn-w">周四</span></a><select class="dn-sel" id="dn-sel" aria-label="跳转到指定日期"><option value="2026-09-30.html">2026-09-30（周三）· 第 1 期</option><option value="2026-10-01.html">2026-10-01（周四）· 第 2 期</option><option value="2026-10-02.html" selected>2026-10-02（周五）· 第 3 期</option><option value="2026-10-03.html">2026-10-03（周六）· 第 4 期</option><option value="2026-10-05.html">2026-10-05（周一）· 第 5 期</option></select><a class="dn-btn" href="2026-10-03.html" rel="next" title="下一期 2026-10-03（周六）"><span class="dn-t">10-03</span><span class="dn-w">周六</span><span class="dn-ar">›</span></a><span class="dn-pos">第 3 / 5 期</span><a class="dn-idx" href="archive.html">全部日期 →</a><span class="dn-hint">键盘 [ ] 翻日期</span></nav>
+    <nav class="daynav" id="daynav" aria-label="日期时间线" data-prev="2026-10-01.html" data-next="2026-10-03.html"><a class="dn-btn" href="2026-10-01.html" rel="prev" title="上一期 2026-10-01（周四）"><span class="dn-ar">‹</span><span class="dn-t">10-01</span><span class="dn-w">周四</span></a><select class="dn-sel" id="dn-sel" aria-label="跳转到指定日期"><option value="2026-09-30.html">2026-09-30（周三）</option><option value="2026-10-01.html">2026-10-01（周四）</option><option value="2026-10-02.html" selected>2026-10-02（周五）</option><option value="2026-10-03.html">2026-10-03（周六）</option><option value="2026-10-05.html">2026-10-05（周一）</option></select><a class="dn-btn" href="2026-10-03.html" rel="next" title="下一期 2026-10-03（周六）"><span class="dn-t">10-03</span><span class="dn-w">周六</span><span class="dn-ar">›</span></a><span class="dn-pos">第 3 / 5 期</span><a class="dn-idx" href="archive.html">全部日期 →</a><span class="dn-hint">键盘 [ ] 翻日期</span></nav>
     <h1>手办 / 可动人偶情报　<span style="font-size:15px;color:#8b95a3;font-weight:400">2026-10-02</span></h1>
     <div class="sub">从 36 条粗筛候选中提取</div>
     <div class="stat"><span id="un-pill-wrap" style="background:#eaf1fe;border-color:#c9d8f5;color:#2f6fed">📬 未读 <b id="un-pill">24</b></span><span>共 <b>31</b> 条情报</span><span>其中新品清单 <b>27</b> 条</span><span>其中 <b>14</b> 条高相关</span><span>新品公布 <b>24</b></span><span>开订 <b>1</b></span><span>发售 <b>1</b></span><span>展会 <b>2</b></span><span>实物测评 <b>3</b></span><span>生成于 2026-10-02 12:11</span></div>
@@ -367,6 +375,7 @@ body.lb-lock{overflow:hidden}
 <article class="card" data-type="实物测评" data-rel="中" data-isnew="0" data-ukey="yolopark|震荡波" data-first="1" data-search="yolopark 变形金刚 震荡波 amk pro 路边de大叔分享 yolopark amk pro 系列震荡波（视频）。 路边de大叔     实物测评"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-review">实物测评</span><span class="rel r-mid">中相关</span><span class="time">2026-10-01 19:00</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/3963601049/RkG80hskB" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">YOLOPARK</span> · <span class="brand">震荡波 / 变形金刚</span> · <span class="line">AMK PRO</span></a></h3><p class="sum">路边de大叔分享 YOLOPARK AMK PRO 系列震荡波（视频）。</p><div class="why">相关理由：YOLOPARK 变形金刚拼装线新品动态，62 店同品牌在售</div></div><div class="side"><a class="src" href="https://weibo.com/3963601049/RkG80hskB" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@路边de大叔</span></a><span class="tags"><em>#变形金刚</em><em>#YOLOPARK</em><em>#AMK PRO</em><em>#震荡波</em></span></div></div></article></div></section></div>
   <div class="empty" id="empty" style="display:none">没有匹配的情报，换个关键词或筛选条件试试。</div>
   <div class="legend"><span data-only-view="new">当前为 <b>新品清单</b>：只列微博里出现的新品与它们的开订 / 发售 / 再版动向，按「首次亮相 → 可下单」排序，同一款产品的多条微博已合并。</span><span data-only-view="all" hidden>当前为 <b>全部情报</b>：含实物测评、展会限定等全部类别，按类型分组。</span>　·　点击右栏缩略图可放大看原图，点标题或按钮可跳转原博（需登录微博）。　·　点击右栏缩略图可放大看原图，点标题或按钮可跳转原博（需登录微博）。</div>
+  <div class="dayfoot" id="dayfoot"><span class="df-t">第 3 / 5 期读完</span><a class="dn-btn" href="2026-10-01.html" rel="prev"><span class="dn-ar">‹</span>上一期 10-01</a><a class="dn-btn dn-primary" href="2026-10-03.html" rel="next">下一期 10-03<span class="dn-ar">›</span></a><a class="dn-btn" href="archive.html">全部日期</a></div>
 </main>
 
 <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="配图放大预览">
