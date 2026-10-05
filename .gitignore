@@ -1,0 +1,5 @@
+# 本文件由 publish_daily.py 自动写入，请不要手工编辑
+# 截图 / 预览用的临时文件，不是成品
+_preview*.html
+_*.png
+_*.tmp
