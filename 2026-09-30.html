@@ -23,8 +23,10 @@ a:hover{text-decoration:underline}
 .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
 
 /* 顶栏 */
+/* 顶栏：下滚收起（正文零遮挡）、上滚立刻回来 —— 与总览页同一套手势 */
 .top{background:var(--card);border-bottom:1px solid var(--line);
-     position:sticky;top:0;z-index:9}
+     position:sticky;top:0;z-index:9;transition:transform .22s ease}
+.top.hide{transform:translateY(-100%)}
 .top .inner{padding:12px 0 10px}
 h1{margin:0 0 6px;font-size:22px;letter-spacing:.2px}
 /* 行 1：标题 + 来源说明 + 未读胶囊 + 核心数字，压成一行 */
@@ -315,7 +317,8 @@ body.lb-lock{overflow:hidden}
   .unreadbar{display:none}
   .daynav{display:none}
   .dayfoot{display:none}
-  .top{position:static}.controls{display:none}
+  .top{position:static;transform:none}
+  .controls{display:none}
   body{background:#fff}.card{break-inside:avoid;box-shadow:none}
 }
 </style>
@@ -877,6 +880,32 @@ body.lb-lock{overflow:hidden}
     if (e.key === '['){ if (!prev) return; e.preventDefault(); location.href = prev; }
     if (e.key === ']'){ if (!next) return; e.preventDefault(); location.href = next; }
   });
+})();
+
+/* 滚动方向感应：下滚把顶栏收起来（读正文时零遮挡），上滚 / 回到顶部立刻回来。
+   与总览页同一套手感。顶栏内有焦点时（正在搜索 / 选日期）不收起，
+   否则主人正打字顶栏却滑走了。 */
+(function(){
+  var top = document.querySelector('header.top');
+  if (!top) return;
+  var lastY = window.pageYOffset || 0, ticking = false;
+  function inTop(){
+    var a = document.activeElement;
+    return !!(a && top.contains(a));
+  }
+  window.addEventListener('scroll', function(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      var y = window.pageYOffset || 0, dy = y - lastY;
+      if (!inTop()){
+        if (dy > 4 && y > 160) top.classList.add('hide');
+        else if (dy < -4 || y <= 160) top.classList.remove('hide');
+      }
+      lastY = y;
+      ticking = false;
+    });
+  }, {passive:true});
 })();
 </script>
 </body>
