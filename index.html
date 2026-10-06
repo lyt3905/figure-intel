@@ -25,17 +25,29 @@ a:hover{text-decoration:underline}
 /* 顶栏 */
 .top{background:var(--card);border-bottom:1px solid var(--line);
      position:sticky;top:0;z-index:9}
-.top .inner{padding:22px 0 14px}
+.top .inner{padding:12px 0 10px}
 h1{margin:0 0 6px;font-size:22px;letter-spacing:.2px}
-.sub{color:var(--ink2);font-size:13.5px}
-.stat{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.stat span{background:var(--bg);border:1px solid var(--line);border-radius:999px;
-  padding:3px 11px;font-size:12.5px;color:var(--ink2)}
-.stat span b{color:var(--ink);font-weight:600}
+/* 行 1：标题 + 来源说明 + 未读胶囊 + 核心数字，压成一行 */
+.toprow{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px 12px}
+.toprow h1{margin:0;font-size:19px;letter-spacing:.2px;white-space:nowrap}
+.toprow h1 .h1d{font-size:13.5px;color:var(--ink3);font-weight:400}
+.sp{flex:1 1 auto}
+.sub{color:var(--ink3);font-size:12.5px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;max-width:38vw}
+.stat{display:flex;flex-wrap:wrap;align-items:center;gap:5px 10px;
+  margin:0;font-size:12.5px;color:var(--ink3)}
+.stat span{color:var(--ink2)}
+.stat span b{color:var(--ink2);font-weight:600}
+.stat .un-pill{background:#eaf1fe;border:1px solid #c9d8f5;color:#2f6fed;
+  border-radius:999px;padding:3px 11px}
+.stat .un-pill b{color:#2f6fed}
+/* 行 2：时间线 + 搜索 + 视图切换，同一排；窄屏自动换行 */
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+  margin-top:9px;padding-top:9px;border-top:1px dashed var(--line)}
 
-/* 日期时间线：读完一天直接翻到前一天 / 后一天（按钮 + 日期胶囊同一排） */
-.daynav{display:flex;flex-wrap:nowrap;align-items:center;gap:7px;
-  margin:0 0 13px;padding-bottom:11px;border-bottom:1px dashed var(--line)}
+/* 日期时间线：读完一天直接翻到前一天 / 后一天（翻页按钮 + 下拉任选日期，同一排） */
+.daynav{display:flex;flex-wrap:wrap;align-items:center;gap:7px;
+  flex:0 1 auto;min-width:0}
 .dn-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);
   background:var(--card);color:var(--ink2);border-radius:8px;padding:4px 10px;
   font-size:12.5px;white-space:nowrap;cursor:pointer;transition:.12s}
@@ -45,20 +57,12 @@ h1{margin:0 0 6px;font-size:22px;letter-spacing:.2px}
 .dn-btn .dn-w{color:var(--ink3);font-size:11.5px}
 .dn-btn.off{opacity:.45;cursor:not-allowed;background:var(--bg)}
 .dn-btn.off:hover{border-color:var(--line);color:var(--ink2);background:var(--bg)}
-.dn-strip{display:flex;gap:6px;overflow-x:auto;flex:1 1 0;min-width:0;
-  padding:2px 1px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
-.dn-strip::-webkit-scrollbar{height:4px}
-.dn-strip::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px}
-.dn-chip{border:1px solid var(--line);background:var(--bg);color:var(--ink2);
-  border-radius:999px;padding:4px 11px;font-size:12.5px;white-space:nowrap;
-  cursor:pointer;transition:.12s;text-decoration:none;flex:0 0 auto}
-.dn-chip:hover{border-color:var(--accent);color:var(--accent);
-  background:var(--accent-soft);text-decoration:none}
-.dn-chip.on{background:var(--accent);border-color:var(--accent);color:#fff;
-  font-weight:600}
-.dn-chip.on:hover{color:#fff}
+.dn-sel{border:1px solid var(--line);background:var(--bg);color:var(--ink);
+  border-radius:8px;padding:4px 8px;font-size:12.5px;font-family:inherit;
+  cursor:pointer;max-width:200px}
+.dn-sel:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
 .dn-pos{font-size:12px;color:var(--ink3);white-space:nowrap}
-.dn-idx{margin-left:auto;font-size:12.5px;white-space:nowrap}
+.dn-idx{font-size:12.5px;white-space:nowrap}
 .dn-hint{font-size:11.5px;color:var(--ink3);white-space:nowrap;opacity:.85}
 /* 页脚翻页条：长页面读完在底部，就地翻到相邻一期 */
 .dayfoot{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
@@ -70,9 +74,9 @@ h1{margin:0 0 6px;font-size:22px;letter-spacing:.2px}
 
 /* 控件 */
 .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
-  margin-top:14px;padding-bottom:12px}
-#q{flex:1 1 260px;min-width:200px;padding:8px 12px;border:1px solid var(--line);
-  border-radius:8px;font-size:14px;font-family:inherit;background:var(--bg)}
+  flex:1 1 300px;margin-top:0;padding-bottom:0}
+#q{flex:1 1 180px;min-width:150px;padding:7px 12px;border:1px solid var(--line);
+  border-radius:8px;font-size:13.5px;font-family:inherit;background:var(--bg)}
 #q:focus{outline:2px solid var(--accent-soft);border-color:var(--accent);
   background:var(--card)}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
@@ -82,10 +86,14 @@ h1{margin:0 0 6px;font-size:22px;letter-spacing:.2px}
 .chip:hover{border-color:#c9d2de;color:var(--ink)}
 .chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .count{color:var(--ink3);font-size:12.5px;margin-left:auto;white-space:nowrap}
+/* 分类 / 相关度筛选条：只在「全部情报」视图出现，不占默认视图的高度 */
+.filterbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  margin-top:9px;padding-top:9px;border-top:1px dashed var(--line)}
+.view-new .filterbar{display:none}
 
 /* 视图切换：新品清单 / 全部情报 */
 .view-new .group-all{display:none}
-.views{display:flex;gap:4px;margin-top:14px;background:var(--bg);
+.views{display:flex;gap:4px;margin-top:0;background:var(--bg);
   border:1px solid var(--line);border-radius:11px;padding:4px;width:fit-content}
 .view{border:0;background:transparent;color:var(--ink2);font-family:inherit;
   font-size:13.5px;font-weight:600;padding:7px 16px;border-radius:8px;
@@ -253,6 +261,10 @@ body.lb-lock{overflow:hidden}
     align-items:center;gap:9px;width:100%}
   .side .facts{flex:1 1 100%}
   .side .thumbs{flex:1 1 100%}
+  .toprow .sp{display:none}
+  .stat{flex:1 1 100%}
+  .toolbar{gap:8px}
+  .controls{flex:1 1 100%}
   .views{width:100%}
   .view{flex:1;text-align:center}
 }
@@ -260,6 +272,9 @@ body.lb-lock{overflow:hidden}
   h1{font-size:19px}
   .count{margin-left:0;width:100%}
   .card{padding:13px 14px 14px}
+  .toprow h1{font-size:17px}
+  .sub{max-width:100%}
+  .dn-sel{max-width:130px}
 }
 /* 未读 / 已读：本日新出现的条目读到即自动标记已读 */
 .unreadbar{display:flex;flex-wrap:wrap;align-items:center;gap:9px;
@@ -308,16 +323,23 @@ body.lb-lock{overflow:hidden}
 <body class="view-new"><div style="display:flex;align-items:center;gap:12px;padding:9px 18px;background:#1f2430;color:#fff;font:13px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif"><span style="font-weight:600">手办情报 · 每日更新</span><span style="opacity:.72">2026-10-06 周二</span><span style="opacity:.55">第 6 / 6 期</span><a href="archive.html" style="margin-left:auto;color:#9ecbff;text-decoration:none">历史归档 →</a></div>
 <header class="top">
   <div class="wrap inner">
-    <nav class="daynav" id="daynav" aria-label="日期时间线" data-prev="2026-10-05.html" data-next=""><a class="dn-btn" href="2026-10-05.html" rel="prev" title="上一期 2026-10-05（周一）"><span class="dn-ar">‹</span><span class="dn-t">10-05</span><span class="dn-w">周一</span></a><span class="dn-strip"><a class="dn-chip" href="2026-09-30.html" title="2026-09-30（周三）">09-30</a><a class="dn-chip" href="2026-10-01.html" title="2026-10-01（周四）">10-01</a><a class="dn-chip" href="2026-10-02.html" title="2026-10-02（周五）">10-02</a><a class="dn-chip" href="2026-10-03.html" title="2026-10-03（周六）">10-03</a><a class="dn-chip" href="2026-10-05.html" title="2026-10-05（周一）">10-05</a><a class="dn-chip on" href="2026-10-06.html" title="2026-10-06（周二）">10-06（今天）</a></span><span class="dn-btn off" title="已是最新一期"><span class="dn-t">最新</span><span class="dn-ar">›</span></span><span class="dn-pos">第 6 / 6 期</span><a class="dn-idx" href="archive.html">全部日期 →</a><span class="dn-hint">键盘 [ ] 翻日期</span></nav>
-    <h1>手办 / 可动人偶情报　<span style="font-size:15px;color:#8b95a3;font-weight:400">2026-10-06</span></h1>
-    <div class="sub">从 10 条粗筛候选中提取</div>
-    <div class="stat"><span id="un-pill-wrap" style="background:#eaf1fe;border-color:#c9d8f5;color:#2f6fed">📬 未读 <b id="un-pill">6</b></span><span>共 <b>7</b> 条情报</span><span>其中新品清单 <b>6</b> 条</span><span>其中 <b>1</b> 条高相关</span><span>新品公布 <b>3</b></span><span>发售 <b>2</b></span><span>再版 <b>1</b></span><span>实物测评 <b>1</b></span><span>生成于 2026-10-06 10:10</span></div>
-    <div class="views" id="views"><button class="view on" type="button" data-view="new"><b>🆕 新品清单</b><span class="vh">6 件</span></button><button class="view" type="button" data-view="all">全部情报<span class="vh">7 条</span></button></div>
-    <div class="controls">
-      <input id="q" type="search" placeholder="搜索厂商 / 角色 / 产品线 / 摘要…（按 / 聚焦）">
+    <div class="toprow">
+      <h1>手办情报　<span class="h1d">· 10-06 周二</span></h1>
+      <span class="sub" title="从 10 条粗筛候选中提取">从 10 条粗筛候选中提取</span>
+      <span class="sp"></span>
+      <div class="stat"><span class="un-pill">📬 未读 <b id="un-pill">6</b></span><span>共 <b>7</b> 条情报</span><span>新品 <b>6</b></span><span>高相关 <b>1</b></span><span data-only-view="all" hidden>新品公布 <b>3</b></span><span data-only-view="all" hidden>发售 <b>2</b></span><span data-only-view="all" hidden>再版 <b>1</b></span><span data-only-view="all" hidden>实物测评 <b>1</b></span></div>
+    </div>
+    <div class="toolbar">
+      <nav class="daynav" id="daynav" aria-label="日期时间线" data-prev="2026-10-05.html" data-next=""><a class="dn-btn" href="2026-10-05.html" rel="prev" title="上一期 2026-10-05（周一）"><span class="dn-ar">‹</span><span class="dn-t">10-05</span><span class="dn-w">周一</span></a><select class="dn-sel" id="dn-sel" aria-label="跳转到指定日期" title="选择要看的日期"><option value="2026-09-30.html">09-30 周三</option><option value="2026-10-01.html">10-01 周四</option><option value="2026-10-02.html">10-02 周五</option><option value="2026-10-03.html">10-03 周六</option><option value="2026-10-05.html">10-05 周一</option><option value="2026-10-06.html" selected>10-06 周二（今天）</option></select><span class="dn-btn off" title="已是最新一期"><span class="dn-t">最新</span><span class="dn-ar">›</span></span><span class="dn-pos">第 6 / 6 期</span><a class="dn-idx" href="archive.html">全部日期 →</a><span class="dn-hint">键盘 [ ] 翻日期</span></nav>
+      <div class="controls">
+        <input id="q" type="search" placeholder="搜索厂商 / 角色 / 产品线 / 摘要…（按 / 聚焦）">
+        <div class="views" id="views"><button class="view on" type="button" data-view="new"><b>🆕 新品清单</b><span class="vh">6 件</span></button><button class="view" type="button" data-view="all">全部情报<span class="vh">7 条</span></button></div>
+        <span class="count" id="count"></span>
+      </div>
+    </div>
+    <div class="filterbar" id="filterbar">
       <div class="chips" id="typeChips"><button class="chip on" data-type-chip="全部">全部</button><button class="chip" data-type-chip="新品公布">新品公布 <span style="opacity:.6">3</span></button><button class="chip" data-type-chip="发售">发售 <span style="opacity:.6">2</span></button><button class="chip" data-type-chip="再版">再版 <span style="opacity:.6">1</span></button><button class="chip" data-type-chip="实物测评">实物测评 <span style="opacity:.6">1</span></button></div>
       <div class="chips" id="relChips"><button class="chip on" data-rel-chip="全部">不限相关度</button><button class="chip" data-rel-chip="高">仅高相关 1</button></div>
-      <span class="count" id="count"></span>
     </div>
   </div>
 </header>
@@ -337,7 +359,7 @@ body.lb-lock{overflow:hidden}
 <section class="group group-all" data-group="再版"><h2><span class="badge t-reprint">再版</span><span class="gn">1 条</span><span class="gbar"></span></h2><div class="grid"><article class="card" data-type="再版" data-rel="高" data-isnew="1" data-ukey="bingotoys|爵士 jazz" data-first="1" data-search="bingotoys 变形金刚 爵士 jazz bt系列 super soldier 原博 @bingo_toys 宣布 bt-07 super soldier jezzy jazz 再版：本次再版增强大腿根部关节结构强度，并改用物理性能更优的 pok 材料；首批购买客户可在 10月20日前向原购买店铺/商家申请补发最新关节零件（邮费自理） 莽姆森     再版"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-reprint">再版</span><span class="rel r-high">高相关</span><span class="time">2026-10-05 22:21</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1735145277/Rlj9JD9qe" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">BingoToys</span> · <span class="brand">爵士 Jazz / 变形金刚</span> · <span class="line">BT系列 Super Soldier</span></a></h3><p class="sum">原博 @Bingo_Toys 宣布 BT-07 Super Soldier Jezzy Jazz 再版：本次再版增强大腿根部关节结构强度，并改用物理性能更优的 POK 材料；首批购买客户可在 10月20日前向原购买店铺/商家申请补发最新关节零件（邮费自理）</p><div class="why">相关理由：第三方变形玩具（G1 爵士）再版公告，62 店主类目，关节补强与补件政策对在售同款有直接影响</div></div><div class="side"><div class="thumbs"><a class="thumb tre" href="https://weibo.com/1735145277/Rlj9JD9qe" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 7 张）" title="点开原微博看大图（共 7 张）"><img src="media/thumb/008qG6skgy1ihrtynz0vxj30qo0istbb.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb tre" href="https://weibo.com/1735145277/Rlj9JD9qe" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 7 张）" title="点开原微博看大图（共 7 张）"><img src="media/thumb/008qG6skgy1ihrty0ks98j30hs0qowfz.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb tre" href="https://weibo.com/1735145277/Rlj9JD9qe" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 7 张）" title="点开原微博看大图（共 7 张）"><img src="media/thumb/008qG6skgy1ihrty0jn7hj30m80etaap.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+4</span></a></div><a class="src" href="https://weibo.com/1735145277/Rlj9JD9qe" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@莽姆森</span></a><span class="tags"><em>#变形金刚</em><em>#第三方</em><em>#再版</em><em>#爵士</em></span></div></div></article></div></section>
 <section class="group group-all" data-group="实物测评"><h2><span class="badge t-review">实物测评</span><span class="gn">1 条</span><span class="gbar"></span></h2><div class="grid"><article class="card" data-type="实物测评" data-rel="低" data-isnew="0" data-ukey="布鲁可|双鱼座阿布罗狄" data-first="1" data-search="布鲁可 圣斗士星矢 双鱼座阿布罗狄  塞伯坦守望者发布布鲁可圣斗士「玫瑰战士 双鱼座阿布罗狄」展示（重温十二宫系列，视频帖） 塞伯坦守望者     实物测评"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-review">实物测评</span><span class="rel r-low">低相关</span><span class="time">2026-10-05 18:04</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1088900641/Rlhtsjyfb" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">布鲁可</span> · <span class="brand">双鱼座阿布罗狄 / 圣斗士星矢</span></a></h3><p class="sum">塞伯坦守望者发布布鲁可圣斗士「玫瑰战士 双鱼座阿布罗狄」展示（重温十二宫系列，视频帖）</p></div><div class="side"><a class="src" href="https://weibo.com/1088900641/Rlhtsjyfb" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@塞伯坦守望者</span></a><span class="tags"><em>#布鲁可</em><em>#圣斗士星矢</em></span></div></div></article></div></section></div>
   <div class="empty" id="empty" style="display:none">没有匹配的情报，换个关键词或筛选条件试试。</div>
-  <div class="legend"><span data-only-view="new">当前为 <b>新品清单</b>：只列微博里出现的新品与它们的开订 / 发售 / 再版动向，按「首次亮相 → 可下单」排序，同一款产品的多条微博已合并。</span><span data-only-view="all" hidden>当前为 <b>全部情报</b>：含实物测评、展会限定等全部类别，按类型分组。</span>　·　点击右栏缩略图可放大看原图，点标题或按钮可跳转原博（需登录微博）。　·　点击右栏缩略图可放大看原图，点标题或按钮可跳转原博（需登录微博）。</div>
+  <div class="legend"><span data-only-view="new">当前为 <b>新品清单</b>：只列微博里出现的新品与它们的开订 / 发售 / 再版动向，按「首次亮相 → 可下单」排序，同一款产品的多条微博已合并。</span><span data-only-view="all" hidden>当前为 <b>全部情报</b>：含实物测评、展会限定等全部类别，按类型分组。</span>　·　点击右栏缩略图可放大看原图，点标题或按钮可跳转原博（需登录微博）。　·　生成于 2026-10-06 10:10　·　点击右栏缩略图可放大看原图，点标题或按钮可跳转原博（需登录微博）。</div>
   <div class="dayfoot" id="dayfoot"><span class="df-t">第 6 / 6 期读完</span><a class="dn-btn" href="2026-10-05.html" rel="prev"><span class="dn-ar">‹</span>上一期 10-05</a><span class="dn-btn off">已是最新一期</span><a class="dn-btn" href="archive.html">全部日期</a></div>
 </main>
 
@@ -775,19 +797,16 @@ body.lb-lock{overflow:hidden}
   syncFilter();
 })();
 
-/* 日期时间线：读完一天直接翻到相邻一天（点日期胶囊 / 键盘 [ ]） */
+/* 日期时间线：读完一天直接翻到相邻一天（下拉任选 / 键盘 [ ]） */
 (function(){
   var nav = document.getElementById('daynav');
   if (!nav) return;
   var prev = nav.getAttribute('data-prev') || '';
   var next = nav.getAttribute('data-next') || '';
-  /* 页面打开时把当前日期胶囊滚到条中间（手动设 scrollLeft，避免 scrollIntoView 带动整页滚动） */
-  var cur = nav.querySelector('.dn-chip.on');
-  if (cur && cur.parentElement) {
-    var strip = cur.parentElement;
-    var to = cur.offsetLeft - strip.clientWidth / 2 + cur.offsetWidth / 2;
-    requestAnimationFrame(function(){ strip.scrollLeft = Math.max(to, 0); });
-  }
+  var sel  = document.getElementById('dn-sel');
+  if (sel) sel.addEventListener('change', function(){
+    if (sel.value) location.href = sel.value;
+  });
   document.addEventListener('keydown', function(e){
     // 放大预览开着时把键盘让给它（它用 ←/→ 翻图）
     if (document.body.classList.contains('lb-lock')) return;
