@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>手办情报 · 2026-10-23</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#fff; --line:#e4e7ec; --ink:#16181d; --ink2:#5a6472;
+  --ink3:#8b95a3; --accent:#2f6fed; --accent-soft:#eaf1fe;
+  --high:#c5221f; --high-bg:#fdeceb; --mid:#1558c0; --mid-bg:#e8f0fe;
+  --low:#5f6b7a; --low-bg:#eef0f3;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",
+       "PingFang SC","Hiragino Sans GB",sans-serif;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+/* 顶栏 */
+/* 顶栏：下滚收起（正文零遮挡）、上滚立刻回来 —— 与总览页同一套手势 */
+.top{background:var(--card);border-bottom:1px solid var(--line);
+     position:sticky;top:0;z-index:9;transition:transform .22s ease}
+.top.hide{transform:translateY(-100%)}
+.top .inner{padding:12px 0 10px}
+h1{margin:0 0 6px;font-size:22px;letter-spacing:.2px}
+/* 行 1：标题 + 来源说明 + 未读胶囊 + 核心数字，压成一行 */
+.toprow{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px 12px}
+.toprow h1{margin:0;font-size:19px;letter-spacing:.2px;white-space:nowrap}
+.toprow h1 .h1d{font-size:13.5px;color:var(--ink3);font-weight:400}
+.sp{flex:1 1 auto}
+.sub{color:var(--ink3);font-size:12.5px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;max-width:38vw}
+.stat{display:flex;flex-wrap:wrap;align-items:center;gap:5px 10px;
+  margin:0;font-size:12.5px;color:var(--ink3)}
+.stat span{color:var(--ink2)}
+.stat span b{color:var(--ink2);font-weight:600}
+.stat .un-pill{background:#eaf1fe;border:1px solid #c9d8f5;color:#2f6fed;
+  border-radius:999px;padding:3px 11px}
+.stat .un-pill b{color:#2f6fed}
+/* 行 2：时间线 + 搜索 + 视图切换，同一排；窄屏自动换行 */
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+  margin-top:9px;padding-top:9px;border-top:1px dashed var(--line)}
+
+/* 日期时间线：读完一天直接翻到前一天 / 后一天（翻页按钮 + 下拉任选日期，同一排） */
+.daynav{display:flex;flex-wrap:wrap;align-items:center;gap:7px;
+  flex:0 1 auto;min-width:0}
+.dn-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink2);border-radius:8px;padding:4px 10px;
+  font-size:12.5px;white-space:nowrap;cursor:pointer;transition:.12s}
+.dn-btn:hover{border-color:var(--accent);color:var(--accent);
+  background:var(--accent-soft);text-decoration:none}
+.dn-btn .dn-ar{font-size:14px;line-height:1;opacity:.75}
+.dn-btn .dn-w{color:var(--ink3);font-size:11.5px}
+.dn-btn.off{opacity:.45;cursor:not-allowed;background:var(--bg)}
+.dn-btn.off:hover{border-color:var(--line);color:var(--ink2);background:var(--bg)}
+.dn-sel{border:1px solid var(--line);background:var(--bg);color:var(--ink);
+  border-radius:8px;padding:4px 8px;font-size:12.5px;font-family:inherit;
+  cursor:pointer;max-width:200px}
+.dn-sel:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.dn-pos{font-size:12px;color:var(--ink3);white-space:nowrap}
+.dn-idx{font-size:12.5px;white-space:nowrap}
+.dn-hint{font-size:11.5px;color:var(--ink3);white-space:nowrap;opacity:.85}
+/* 页脚翻页条：长页面读完在底部，就地翻到相邻一期 */
+.dayfoot{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  gap:9px;margin:14px 0 0;padding:18px 0 6px;border-top:1px solid var(--line)}
+.dayfoot .df-t{font-size:12.5px;color:var(--ink3)}
+.dayfoot .dn-btn{padding:7px 15px;font-size:13px}
+.dn-btn.dn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.dn-btn.dn-primary:hover{background:#2560d8;border-color:#2560d8;color:#fff}
+
+/* 控件 */
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  flex:1 1 300px;margin-top:0;padding-bottom:0}
+#q{flex:1 1 180px;min-width:150px;padding:7px 12px;border:1px solid var(--line);
+  border-radius:8px;font-size:13.5px;font-family:inherit;background:var(--bg)}
+#q:focus{outline:2px solid var(--accent-soft);border-color:var(--accent);
+  background:var(--card)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink2);
+  border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;
+  font-family:inherit;transition:.12s}
+.chip:hover{border-color:#c9d2de;color:var(--ink)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.count{color:var(--ink3);font-size:12.5px;margin-left:auto;white-space:nowrap}
+/* 分类 / 相关度筛选条：只在「全部情报」视图出现，不占默认视图的高度 */
+.filterbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  margin-top:9px;padding-top:9px;border-top:1px dashed var(--line)}
+.view-new .filterbar{display:none}
+
+/* 视图切换：新品清单 / 全部情报 */
+.view-new .group-all{display:none}
+.views{display:flex;gap:4px;margin-top:0;background:var(--bg);
+  border:1px solid var(--line);border-radius:11px;padding:4px;width:fit-content}
+.view{border:0;background:transparent;color:var(--ink2);font-family:inherit;
+  font-size:13.5px;font-weight:600;padding:7px 16px;border-radius:8px;
+  cursor:pointer;transition:.15s;white-space:nowrap}
+.view:hover{color:var(--ink)}
+.view.on{background:var(--card);color:var(--accent);
+  box-shadow:0 1px 4px rgba(20,30,50,.1)}
+.view b{font-weight:700}
+.view .vh{font-weight:400;opacity:.62;font-size:12px;margin-left:3px}
+
+/* 新品清单：同一款产品的多条报道 */
+.reports{margin:0;font-size:12.5px;color:var(--ink2);background:var(--bg);
+  border:1px dashed var(--line);border-radius:8px;padding:7px 10px;
+  display:flex;flex-wrap:wrap;gap:6px 12px}
+.reports span{display:inline-flex;align-items:center;gap:4px}
+.reports .k{color:var(--ink3);font-size:12px}
+.kinds{display:inline-flex;gap:4px}
+.kinds em{font-style:normal;font-size:11.5px;color:var(--ink3);
+  background:var(--bg);border:1px solid var(--line);border-radius:5px;
+  padding:1px 6px}
+
+/* 纯新品清单：脱离情报分类的单列编号列表 */
+.newlist{display:flex;flex-direction:column;gap:11px}
+.newlist .card{position:relative;padding-left:52px}
+.newlist .idx{position:absolute;left:15px;top:15px;width:24px;height:24px;
+  border-radius:50%;background:var(--accent-soft);color:var(--accent);
+  font-size:12.5px;font-weight:700;display:flex;align-items:center;
+  justify-content:center;line-height:1}
+.rank{display:inline-flex;align-items:center;gap:5px;font-size:12px;
+  font-weight:600;border-radius:6px;padding:2px 9px;letter-spacing:.2px}
+.rank-1{background:#e3f5ea;color:#1a7a45}
+.rank-2{background:#fdf3dc;color:#8a6412}
+.rank-3{background:#ede7fd;color:#5b3ec8}
+.rank-4{background:#eef0f3;color:#5f6b7a}
+.newhead{display:flex;align-items:baseline;gap:10px;margin:0 0 13px;
+  padding-bottom:9px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.newhead h2{margin:0;font-size:15px;font-weight:650;letter-spacing:.2px}
+.newhead .nh{color:var(--ink3);font-size:12.5px;font-weight:400}
+.newhead .gbar{margin-left:auto;height:3px;width:38px;border-radius:2px;
+  background:#e9edf3}
+
+/* 卡片 */
+main{padding:20px 0 60px}
+.group{margin-bottom:26px}
+.group h2{display:flex;align-items:center;gap:9px;margin:0 0 13px;
+  padding-bottom:9px;border-bottom:1px solid var(--line);font-size:15px;
+  font-weight:650;letter-spacing:.2px}
+.group h2 .gn{color:var(--ink3);font-size:12.5px;font-weight:400}
+.group h2 .gbar{margin-left:auto;height:3px;width:38px;border-radius:2px;
+  background:#e9edf3}
+.group.off{display:none}
+.grid{display:grid;grid-template-columns:1fr;gap:11px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:14px 17px 15px;display:flex;flex-direction:column;gap:9px}
+.card:hover{border-color:#cfd8e5;box-shadow:0 2px 10px rgba(20,30,50,.06)}
+.body{display:grid;grid-template-columns:minmax(0,1fr) 258px;gap:20px;
+  align-items:start}
+.main{display:flex;flex-direction:column;gap:8px;min-width:0}
+.side{display:flex;flex-direction:column;gap:10px;align-items:stretch;
+  border-left:1px solid var(--line);padding-left:17px;min-width:0}
+.side .src{align-self:flex-start}
+.side .tags{align-self:flex-start}
+.head{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.badge{font-size:11.5px;padding:2px 9px;border-radius:6px;font-weight:600;
+  letter-spacing:.2px}
+.t-new{background:#ede7fd;color:#5b3ec8}
+.t-open{background:#e3f5ea;color:#1a7a45}
+.t-sale{background:#fdeee2;color:#a8541a}
+.t-reprint{background:#e6f1f7;color:#1a6285}
+.t-delay{background:#fdeceb;color:#b3261e}
+.t-event{background:#fdf3dc;color:#8a6412}
+.t-review{background:#eaeaf0;color:#4d5364}
+.t-promo{background:#fce8f3;color:#a1336e}
+.t-other{background:#eef0f3;color:#5f6b7a}
+.rel{font-size:11.5px;padding:2px 8px;border-radius:6px;font-weight:600}
+.r-high{background:var(--high-bg);color:var(--high)}
+.r-mid{background:var(--mid-bg);color:var(--mid)}
+.r-low{background:var(--low-bg);color:var(--low)}
+.time{margin-left:auto;color:var(--ink3);font-size:12px;white-space:nowrap}
+.card h3{margin:0;font-size:15.5px;line-height:1.45;font-weight:650}
+.card h3 .brand{color:var(--ink)}
+.card h3 .line{color:var(--ink2);font-weight:500;font-size:13.5px}
+/* 标题本身即链接：点标题也能跳原博 */
+.card h3 a{color:inherit;text-decoration:none;cursor:pointer}
+.card h3 a:hover{color:var(--accent);text-decoration:underline;
+  text-underline-offset:3px}
+.card h3 a:focus-visible{outline:2px solid var(--accent-soft);
+  border-radius:3px}
+.sum{margin:0;color:var(--ink2);font-size:13.5px}
+.facts{display:flex;flex-wrap:wrap;gap:6px;margin:1px 0 0}
+.facts i{font-style:normal;background:var(--bg);border:1px solid var(--line);
+  border-radius:6px;padding:2px 8px;font-size:12.5px;color:var(--ink2)}
+.facts i b{color:var(--ink);font-weight:600;margin-right:3px}
+.why{background:#fbfaf4;border-left:3px solid #e0c98a;border-radius:4px;
+  padding:7px 10px;font-size:12.5px;color:#6b5a24}
+.src{display:inline-flex;align-items:center;gap:5px;font-size:13px;
+  font-weight:600;background:var(--accent-soft);border-radius:8px;
+  padding:6px 12px}
+.src:hover{background:#dce8fd;text-decoration:none}
+.tags{display:flex;gap:5px;flex-wrap:wrap}
+.tags em{font-style:normal;font-size:11.5px;color:var(--ink3)}
+
+/* 缩略图（右栏顶部，方案 A）：点击放大预览 */
+.thumbs{display:flex;flex-wrap:wrap;gap:6px;align-self:flex-start}
+.thumb{position:relative;width:74px;height:74px;padding:0;flex:0 0 auto;
+  border:1px solid var(--line);border-radius:9px;overflow:hidden;
+  background:var(--bg);cursor:zoom-in;display:block;font:inherit;
+  transition:border-color .15s,box-shadow .15s}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .28s ease}
+.thumb:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(20,30,50,.12)}
+.thumb:hover img{transform:scale(1.07)}
+.thumb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.thumb .more{position:absolute;right:3px;bottom:3px;background:rgba(12,15,20,.74);
+  color:#fff;font-size:11px;font-weight:600;line-height:1.45;
+  padding:0 6px;border-radius:999px;pointer-events:none}
+.thumb.tre{box-shadow:inset 0 0 0 2px #f0d9a0}
+.thumb.tre::after{content:"转";position:absolute;left:3px;top:3px;
+  background:rgba(180,140,30,.88);color:#fff;font-size:10px;
+  padding:0 5px;border-radius:5px;line-height:1.5}
+
+/* 放大预览（lightbox） */
+.lb{position:fixed;inset:0;z-index:100;display:none;
+  background:rgba(10,13,18,.93);-webkit-backdrop-filter:blur(4px);
+  backdrop-filter:blur(4px);flex-direction:column;align-items:center;
+  justify-content:center;padding:56px 76px 64px}
+.lb.on{display:flex}
+.lb img{max-width:100%;max-height:calc(100vh - 172px);object-fit:contain;
+  border-radius:6px;background:#101318;box-shadow:0 12px 44px rgba(0,0,0,.5)}
+.lb .cap{color:#e9edf4;font-size:13.5px;margin-top:14px;text-align:center;
+  max-width:min(90vw,900px);line-height:1.6}
+.lb .cap a{color:#9dc0ff}
+.lb .cap .k{color:#98a2b3;font-size:12.5px}
+.lb-btn{border:0;cursor:pointer;font-family:inherit;color:#fff;
+  background:rgba(255,255,255,.12);border-radius:10px;transition:.15s}
+.lb-btn:hover{background:rgba(255,255,255,.26)}
+.lb-btn:disabled{opacity:.22;cursor:default}
+.lb-close{position:absolute;top:18px;right:22px;width:40px;height:40px;
+  font-size:22px;line-height:1;border-radius:50%}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:70px;
+  font-size:24px;line-height:1}
+.lb-prev{left:18px}.lb-next{right:18px}
+.lb-hint{color:#ffd9a8;font-size:13.5px;text-align:center;line-height:1.75;
+  max-width:560px;padding:26px 18px;background:rgba(255,255,255,.06);
+  border-radius:10px}
+.lb-hint code{background:rgba(255,255,255,.14);padding:1px 6px;border-radius:4px;
+  font-size:12.5px}
+.lb-idx{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
+  color:#aab3c2;font-size:12.5px;letter-spacing:.4px}
+.lb-ori{position:absolute;bottom:18px;right:22px;color:#9dc0ff;font-size:12.5px}
+body.lb-lock{overflow:hidden}
+
+@media(max-width:860px){
+  .lb{padding:52px 12px 60px}
+  .lb-nav{width:38px;height:56px;font-size:20px}
+  .lb-prev{left:6px}.lb-next{right:6px}
+  .lb .cap{font-size:12.5px}
+}
+.empty{text-align:center;color:var(--ink3);padding:60px 0;font-size:14px}
+.legend{margin:18px 0 10px;color:var(--ink3);font-size:12.5px}
+@media(max-width:860px){
+  .body{grid-template-columns:1fr;gap:0}
+  .side{border-left:0;border-top:1px solid var(--line);padding-left:0;
+    padding-top:11px;margin-top:11px;flex-direction:row;flex-wrap:wrap;
+    align-items:center;gap:9px;width:100%}
+  .side .facts{flex:1 1 100%}
+  .side .thumbs{flex:1 1 100%}
+  .toprow .sp{display:none}
+  .stat{flex:1 1 100%}
+  .toolbar{gap:8px}
+  .controls{flex:1 1 100%}
+  .views{width:100%}
+  .view{flex:1;text-align:center}
+}
+@media(max-width:640px){
+  h1{font-size:19px}
+  .count{margin-left:0;width:100%}
+  .card{padding:13px 14px 14px}
+  .toprow h1{font-size:17px}
+  .sub{max-width:100%}
+  .dn-sel{max-width:130px}
+}
+/* 未读 / 已读：本日新出现的条目读到即自动标记已读 */
+.unreadbar{display:flex;flex-wrap:wrap;align-items:center;gap:9px;
+  margin:0 0 16px;padding:10px 13px;border-radius:11px;
+  border:1px solid #cfdffb;background:linear-gradient(180deg,#f4f8ff,#edf3ff)}
+.unreadbar.done{border-color:#cfe9d8;background:linear-gradient(180deg,#f3fbf6,#ecf8f1)}
+.unreadbar .ub-t{font-size:13.5px;color:var(--ink2)}
+.unreadbar .ub-t b{font-size:15.5px;color:var(--accent);font-weight:700}
+.unreadbar.done .ub-t b{color:#1a7a45}
+.unreadbar .sp{flex:1 1 auto}
+.unreadbar .ub-hint{flex:1 1 100%;font-size:12px;color:var(--ink3);
+  margin-top:-1px;line-height:1.5}
+.ubtn{border:1px solid #c3d6f8;background:#fff;color:var(--accent);
+  border-radius:8px;padding:5px 12px;font-size:12.5px;font-family:inherit;
+  font-weight:600;cursor:pointer;transition:.12s;white-space:nowrap}
+.ubtn:hover{border-color:var(--accent);background:var(--accent-soft)}
+.ubtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.ubtn.ghost{color:var(--ink2);border-color:var(--line);font-weight:400}
+.ubtn.ghost:hover{color:var(--ink);border-color:#c9d2de;background:#fff}
+/* 未读徽章：出现在卡片头部行首，读到后由 JS 换成绿色「✓ 已读」 */
+.nbadge{font-size:11.5px;font-weight:700;letter-spacing:.2px;padding:2px 9px;
+  border-radius:6px;background:var(--accent);color:#fff}
+.nbadge.read{background:#e6f3ea;color:#1a7a45;font-weight:600}
+.card.read{box-shadow:inset 3px 0 0 0 #cfe9d8}
+.card.read:hover{box-shadow:inset 3px 0 0 0 #cfe9d8,0 2px 10px rgba(20,30,50,.06)}
+#probe{display:none}
+@media(max-width:640px){
+  .unreadbar .ub-t{flex:1 1 100%}
+  .unreadbar .sp{display:none}
+  .ubtn{flex:1 1 auto;text-align:center}
+  /* 窄屏：星期与键盘提示先让位，保证上一期 / 下一期两个按钮不换行 */
+  .dn-btn .dn-w{display:none}
+  .dn-hint{display:none}
+  .dn-idx{margin-left:0}
+  .dn-pos{display:none}
+}
+@media print{
+  .unreadbar{display:none}
+  .daynav{display:none}
+  .dayfoot{display:none}
+  .top{position:static;transform:none}
+  .controls{display:none}
+  body{background:#fff}.card{break-inside:avoid;box-shadow:none}
+}
+</style>
+</head>
+<body class="view-new"><div style="display:flex;align-items:center;gap:12px;padding:9px 18px;background:#1f2430;color:#fff;font:13px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif"><span style="font-weight:600">手办情报 · 每日更新</span><span style="opacity:.72">2026-10-23 周五</span><span style="opacity:.55">第 22 / 22 期</span><a href="archive.html" style="margin-left:auto;color:#9ecbff;text-decoration:none">历史归档 →</a></div>
+<header class="top">
+  <div class="wrap inner">
+    <div class="toprow">
+      <h1>手办情报　<span class="h1d">· 10-23 周五</span></h1>
+      <span class="sub" title="从 22 条粗筛候选中提取">从 22 条粗筛候选中提取</span>
+      <span class="sp"></span>
+      <div class="stat"><span class="un-pill">📬 未读 <b id="un-pill">12</b></span><span>共 <b>18</b> 条情报</span><span>新品 <b>17</b></span><span>高相关 <b>1</b></span><span data-only-view="all" hidden>新品公布 <b>8</b></span><span data-only-view="all" hidden>发售 <b>5</b></span><span data-only-view="all" hidden>再版 <b>1</b></span><span data-only-view="all" hidden>展会 <b>1</b></span><span data-only-view="all" hidden>实物测评 <b>2</b></span><span data-only-view="all" hidden>其他 <b>1</b></span></div>
+    </div>
+    <div class="toolbar">
+      <nav class="daynav" id="daynav" aria-label="日期时间线" data-prev="2026-10-22.html" data-next=""><a class="dn-btn" href="2026-10-22.html" rel="prev" title="上一期 2026-10-22（周四）"><span class="dn-ar">‹</span><span class="dn-t">10-22</span><span class="dn-w">周四</span></a><select class="dn-sel" id="dn-sel" aria-label="跳转到指定日期" title="选择要看的日期"><option value="2026-09-30.html">09-30 周三</option><option value="2026-10-01.html">10-01 周四</option><option value="2026-10-02.html">10-02 周五</option><option value="2026-10-03.html">10-03 周六</option><option value="2026-10-05.html">10-05 周一</option><option value="2026-10-06.html">10-06 周二</option><option value="2026-10-07.html">10-07 周三</option><option value="2026-10-08.html">10-08 周四</option><option value="2026-10-09.html">10-09 周五</option><option value="2026-10-10.html">10-10 周六</option><option value="2026-10-11.html">10-11 周日</option><option value="2026-10-13.html">10-13 周二</option><option value="2026-10-14.html">10-14 周三</option><option value="2026-10-15.html">10-15 周四</option><option value="2026-10-16.html">10-16 周五</option><option value="2026-10-17.html">10-17 周六</option><option value="2026-10-18.html">10-18 周日</option><option value="2026-10-19.html">10-19 周一</option><option value="2026-10-20.html">10-20 周二</option><option value="2026-10-21.html">10-21 周三</option><option value="2026-10-22.html">10-22 周四</option><option value="2026-10-23.html" selected>10-23 周五（今天）</option></select><span class="dn-btn off" title="已是最新一期"><span class="dn-t">最新</span><span class="dn-ar">›</span></span><span class="dn-pos">第 22 / 22 期</span><a class="dn-idx" href="archive.html">全部日期 →</a><span class="dn-hint">键盘 [ ] 翻日期</span></nav>
+      <div class="controls">
+        <input id="q" type="search" placeholder="搜索厂商 / 角色 / 产品线 / 摘要…（按 / 聚焦）">
+        <div class="views" id="views"><button class="view on" type="button" data-view="new"><b>🆕 新品清单</b><span class="vh">17 件</span></button><button class="view" type="button" data-view="all">全部情报<span class="vh">18 条</span></button></div>
+        <span class="count" id="count"></span>
+      </div>
+    </div>
+    <div class="filterbar" id="filterbar">
+      <div class="chips" id="typeChips"><button class="chip on" data-type-chip="全部">全部</button><button class="chip" data-type-chip="新品公布">新品公布 <span style="opacity:.6">8</span></button><button class="chip" data-type-chip="发售">发售 <span style="opacity:.6">5</span></button><button class="chip" data-type-chip="再版">再版 <span style="opacity:.6">1</span></button><button class="chip" data-type-chip="展会">展会 <span style="opacity:.6">1</span></button><button class="chip" data-type-chip="实物测评">实物测评 <span style="opacity:.6">2</span></button><button class="chip" data-type-chip="其他">其他 <span style="opacity:.6">1</span></button></div>
+      <div class="chips" id="relChips"><button class="chip on" data-rel-chip="全部">不限相关度</button><button class="chip" data-rel-chip="高">仅高相关 1</button></div>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+  <div class="unreadbar" id="unreadbar"><span class="ub-t">📬 本日新出现 <b id="un-total">12</b> 件 · 未读 <b id="un-read">12</b> 条</span><span class="sp"></span><button class="ubtn" id="un-toggle" type="button">只看未读</button><button class="ubtn ghost" id="un-all" type="button">全部标为已读</button><button class="ubtn ghost" id="un-export" type="button" title="导出已读回执 JSON；放进 data/read-log.json 后，换浏览器或换打开方式也能接着算未读">导出已读回执</button><span class="ub-hint" id="un-hint"></span></div>
+  <div id="groups"><section class="group group-new" data-group="__new__"><div class="newhead"><h2>🆕 新品清单</h2><span class="nh">17 件新品</span><span class="gbar"></span></div><div class="newlist"><article class="card" data-type="新品公布" data-rel="高" data-isnew="1" data-ukey="dna design|煞星" data-first="1" data-search="dna design 变形金刚 煞星 dk dna design 公布 dk-100a gear master 升级包，适配 haslab 煞星：含七把专属武器补足各成员配置、可变形脚部升级件改善队长身高比例、细节补洞盖板，2027年1月发售、预购截止11月5日。另有 @小白哥乌拉诺斯 晒图评价部分武器偏多余。 dna_design  2027年1月 预购截止 2026年11月5日  新品公布"><span class="idx">1</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="rel r-high">高相关</span><span class="time">2026-10-22 15:46</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7841096704/RnQQ3A28w" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">DNA Design</span> · <span class="brand">煞星 / 变形金刚</span> · <span class="line">DK</span></a></h3><p class="sum">DNA Design 公布 DK-100A GEAR MASTER 升级包，适配 HasLab 煞星：含七把专属武器补足各成员配置、可变形脚部升级件改善队长身高比例、细节补洞盖板，2027年1月发售、预购截止11月5日。另有 @小白哥乌拉诺斯 晒图评价部分武器偏多余。</p><div class="why">相关理由：DNA DK 系列配件包，62 店长期在售同类，属直接选品线</div><div class="reports"><span class="k">另有 1 条报道：</span><span><a href="https://weibo.com/1918541453/RnTDaoxYW" target="_blank" rel="noopener noreferrer">@小白哥乌拉诺斯 ↗</a><span class="k">2026-10-22 22:53</span></span></div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/7841096704/RnQQ3A28w" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 28 张）" title="点开原微博看大图（共 28 张）"><img src="media/thumb/008yErrGly8iib6fud0wxj31lw1da7l6.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/7841096704/RnQQ3A28w" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 28 张）" title="点开原微博看大图（共 28 张）"><img src="media/thumb/008yErrGly8iib6fuanc7j31lw1daqnz.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/7841096704/RnQQ3A28w" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 28 张）" title="点开原微博看大图（共 28 张）"><img src="media/thumb/008yErrGly8iib6fue911j31lw1dae19.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+25</span></a></div><div class="facts"><i><b>发售</b>2027年1月</i><i><b>渠道</b>预购截止 2026年11月5日</i></div><a class="src" href="https://weibo.com/7841096704/RnQQ3A28w" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@DNA_Design</span></a><span class="tags"><em>#变形金刚</em><em>#DNA Design</em><em>#煞星</em><em>#配件包</em></span></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-ukey="megahouse|lookup" data-first="1" data-search="megahouse   lookup 塑唐上架 lookup 10 月新品合集，覆盖鬼灭之刃（我妻善逸/狯岳）、转生史莱姆（利姆鲁/迪亚波罗）、死神（乌尔奇奥拉/葛力姆乔）、火影忍者（奈良鹿丸/我爱罗）、超辉夜姬（月见八千代）、青春之箱（鹿野千夏）、刀剑乱舞（山姥切长义/山姥切国广）、排球少年（日向翔阳/影山飞雄 队服ver.）共十余款，已开放预定。 塑唐玩具     新品公布"><span class="idx">2</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 10:44</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1780846941/RnORn3ZUN" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">MegaHouse</span> · <span class="line">Lookup</span></a></h3><p class="sum">塑唐上架 Lookup 10 月新品合集，覆盖鬼灭之刃（我妻善逸/狯岳）、转生史莱姆（利姆鲁/迪亚波罗）、死神（乌尔奇奥拉/葛力姆乔）、火影忍者（奈良鹿丸/我爱罗）、超辉夜姬（月见八千代）、青春之箱（鹿野千夏）、刀剑乱舞（山姥切长义/山姥切国广）、排球少年（日向翔阳/影山飞雄 队服Ver.）共十余款，已开放预定。</p><div class="why">相关理由：Q 版手办多 IP 合集，可作品类拓展参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1780846941/RnORn3ZUN" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/6a25915dly1iiaxp164z1j213z1hbtxw.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1780846941/RnORn3ZUN" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/6a25915dly1iiaxp0u4o3j20zi1bcjvh.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1780846941/RnORn3ZUN" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/6a25915dly1iiaxp0u8j3j20zi1bcgs3.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+6</span></a></div><a class="src" href="https://weibo.com/1780846941/RnORn3ZUN" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@塑唐玩具</span></a><span class="tags"><em>#Lookup</em><em>#MegaHouse</em><em>#塑唐</em><em>#新品合集</em></span></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-ukey="52toys|工程师" data-search="52toys 普罗米修斯 工程师 1/12 可动人偶 928 toys laboratory 放出 52toys 1/12 可动人偶「engineer pressure suit」官图，题材取自《普罗米修斯》的工程师（engineer）压力服造型，配黑色培养罐道具，标注 coming soon。 928_toys_laboratory    1/12 新品公布"><span class="idx">3</span><div class="head"><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 14:53</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/5490307047/RnQuo09xJ" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">52TOYS</span> · <span class="brand">工程师 / 普罗米修斯</span> · <span class="line">1/12 可动人偶</span></a></h3><p class="sum">928 Toys Laboratory 放出 52TOYS 1/12 可动人偶「ENGINEER PRESSURE SUIT」官图，题材取自《普罗米修斯》的工程师（Engineer）压力服造型，配黑色培养罐道具，标注 COMING SOON。</p><div class="why">相关理由：1/12 可动人偶，硬核影视 IP 品类参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/5490307047/RnQuo09xJ" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/005ZyLFtgy1iib4wco3ywj31d81tmb29.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>比例</b>1/12</i></div><a class="src" href="https://weibo.com/5490307047/RnQuo09xJ" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@928_Toys_Laboratory</span></a><span class="tags"><em>#52TOYS</em><em>#普罗米修斯</em><em>#1/12</em><em>#可动人偶</em></span></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-ukey="孩之宝|marvel legends" data-search="孩之宝 x战警  marvel legends 孩之宝公布 marvel legends x-men &#x27;97 六款新品：jean grey、cyclops、polaris、havok、vindicator、gambit。 小白哥乌拉诺斯     新品公布"><span class="idx">4</span><div class="head"><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 19:04</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1918541453/RnS8qkeFe" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">孩之宝</span> · <span class="brand">X战警</span> · <span class="line">Marvel Legends</span></a></h3><p class="sum">孩之宝公布 Marvel Legends X-Men &#x27;97 六款新品：Jean Grey、Cyclops、Polaris、Havok、Vindicator、Gambit。</p><div class="why">相关理由：孩之宝 6 寸可动人偶，与变形金刚同厂但非主营 IP</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1918541453/RnS8qkeFe" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 7 张）" title="点开原微博看大图（共 7 张）"><img src="media/thumb/725a9e8dgy1iibc4u7sjcj20lc0g0wh2.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/RnS8qkeFe" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 7 张）" title="点开原微博看大图（共 7 张）"><img src="media/thumb/725a9e8dgy1iibc4ul2vdj21jk1jkdkc.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/RnS8qkeFe" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 7 张）" title="点开原微博看大图（共 7 张）"><img src="media/thumb/725a9e8dgy1iibc4v1nhcj21jk1jk0wb.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+4</span></a></div><a class="src" href="https://weibo.com/1918541453/RnS8qkeFe" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@小白哥乌拉诺斯</span></a><span class="tags"><em>#X战警</em><em>#孩之宝</em><em>#Marvel Legends</em></span></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-ukey="布鲁可|哥莫拉" data-first="1" data-search="布鲁可 奥特曼 / 初音未来 哥莫拉 绮遇记 布鲁可积木人「绮遇记」1/12 奥特曼 × 初音未来联名系列「怪兽派对」哥莫拉款即将上新，官方放出剪影预热图。 布鲁可积木人    1/12 新品公布"><span class="idx">5</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-23 10:00</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7790031436/RnXZJbVFC" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">布鲁可</span> · <span class="brand">哥莫拉 / 奥特曼 / 初音未来</span> · <span class="line">绮遇记</span></a></h3><p class="sum">布鲁可积木人「绮遇记」1/12 奥特曼 × 初音未来联名系列「怪兽派对」哥莫拉款即将上新，官方放出剪影预热图。</p><div class="why">相关理由：布鲁可为 62 店常报品牌，联名线可作品类参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/7790031436/RnXZJbVFC" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/008vcb2kgy1iibazwwzsjj311u1eeazr.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>比例</b>1/12</i></div><a class="src" href="https://weibo.com/7790031436/RnXZJbVFC" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@布鲁可积木人</span></a><span class="tags"><em>#布鲁可</em><em>#奥特曼</em><em>#初音未来</em><em>#联名</em></span></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-ukey="yolopark|御天敌" data-search="yolopark 变形金刚 御天敌 amk pro yolopark amk pro 系列《变形金刚3：月黑之时》御天敌（sentinel prime）官图更新。 小白哥乌拉诺斯     新品公布"><span class="idx">6</span><div class="head"><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 19:31</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1918541453/RnSj62k8S" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">YOLOPARK</span> · <span class="brand">御天敌 / 变形金刚</span> · <span class="line">AMK PRO</span></a></h3><p class="sum">YOLOPARK AMK PRO 系列《变形金刚3：月黑之时》御天敌（Sentinel Prime）官图更新。</p><div class="why">相关理由：变形金刚拼装线，62 店同类在售</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1918541453/RnSj62k8S" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 6 张）" title="点开原微博看大图（共 6 张）"><img src="media/thumb/725a9e8dgy1iibcws4ndyj219i1kwqbt.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/RnSj62k8S" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 6 张）" title="点开原微博看大图（共 6 张）"><img src="media/thumb/725a9e8dgy1iibcwshnjqj219i1kwqb6.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/RnSj62k8S" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 6 张）" title="点开原微博看大图（共 6 张）"><img src="media/thumb/725a9e8dgy1iibcwsxk3rj219i1kwqbm.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+3</span></a></div><a class="src" href="https://weibo.com/1918541453/RnSj62k8S" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@小白哥乌拉诺斯</span></a><span class="tags"><em>#变形金刚</em><em>#YOLOPARK</em><em>#御天敌</em><em>#官图</em></span></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-ukey="na_newage|警车 / 烟幕 / 蓝霹雳" data-first="1" data-search="na_newage 变形金刚 警车 / 烟幕 / 蓝霹雳 na 2.0 na_newage 警车 2.0 重制版 2026 新模公布，同模衍生烟幕、蓝霹雳，博主放出变形演示视频。 莽姆森     新品公布"><span class="idx">7</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 18:30</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1735145277/RnRUfeWCK" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">NA_NEWAGE</span> · <span class="brand">警车 / 烟幕 / 蓝霹雳 / 变形金刚</span> · <span class="line">NA 2.0</span></a></h3><p class="sum">NA_NEWAGE 警车 2.0 重制版 2026 新模公布，同模衍生烟幕、蓝霹雳，博主放出变形演示视频。</p><div class="why">相关理由：小比例变形玩具，62 店同类产品线</div></div><div class="side"><a class="src" href="https://weibo.com/1735145277/RnRUfeWCK" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@莽姆森</span></a><span class="tags"><em>#变形金刚</em><em>#NA_NEWAGE</em><em>#警车</em><em>#变形演示</em></span></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-ukey="mezco|僵尸" data-first="1" data-search="mezco  僵尸 one:12 collective mezco 公布 one:12 collective 系列 hopping vampire: jiangshi（跳尸·僵尸）6 寸可动人偶，定价 119 美元。 小白哥乌拉诺斯 $119   6寸 新品公布"><span class="idx">8</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 18:59</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1918541453/RnS6cr9oH" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">Mezco</span> · <span class="brand">僵尸</span> · <span class="line">One:12 Collective</span></a></h3><p class="sum">Mezco 公布 One:12 Collective 系列 Hopping Vampire: Jiangshi（跳尸·僵尸）6 寸可动人偶，定价 119 美元。</p><div class="why">相关理由：6 寸可动人偶，题材新颖可作选品参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1918541453/RnS6cr9oH" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 13 张）" title="点开原微博看大图（共 13 张）"><img src="media/thumb/725a9e8dgy1iibbzwe7ibj20m80m840o.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/RnS6cr9oH" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 13 张）" title="点开原微博看大图（共 13 张）"><img src="media/thumb/725a9e8dgy1iibbzwtkx1j20m80m8tag.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/RnS6cr9oH" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 13 张）" title="点开原微博看大图（共 13 张）"><img src="media/thumb/725a9e8dgy1iibbzx7a8jj20m80m8q4y.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+10</span></a></div><div class="facts"><i><b>参考价</b>$119</i><i><b>比例</b>6寸</i></div><a class="src" href="https://weibo.com/1918541453/RnS6cr9oH" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@小白哥乌拉诺斯</span></a><span class="tags"><em>#Mezco</em><em>#One:12</em><em>#僵尸</em><em>#6寸</em></span></div></div></article>
+<article class="card" data-type="发售" data-rel="中" data-isnew="1" data-ukey="dna design|dk" data-search="dna design 变形金刚  dk dna design 发货与生产进度公告：dk-86 自10月22日起陆续发货；dk-69b、dk-61g 已进入正式生产、预计11月中旬陆续发货；dk-45/45n/82/85/43d/89/90 已收到量产前确认样品，本周将陆续公布进度。 dna_design  dk-86 2026年10月22日起；dk-69b / dk-61g 预计11月中旬   发售"><span class="idx">9</span><div class="head"><span class="badge t-sale">发售</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 10:20</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7841096704/RnOHDveQh" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">DNA Design</span> · <span class="brand">变形金刚</span> · <span class="line">DK</span></a></h3><p class="sum">DNA Design 发货与生产进度公告：DK-86 自10月22日起陆续发货；DK-69B、DK-61G 已进入正式生产、预计11月中旬陆续发货；DK-45/45N/82/85/43D/89/90 已收到量产前确认样品，本周将陆续公布进度。</p><div class="why">相关理由：DK 系列为 62 店在售配件线，发货进度影响补货节奏</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/7841096704/RnOHDveQh" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 2 张）" title="点开原微博看大图（共 2 张）"><img src="media/thumb/008yErrGly8iiax0gj7lij30us1520zb.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/7841096704/RnOHDveQh" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 2 张）" title="点开原微博看大图（共 2 张）"><img src="media/thumb/008yErrGly8iiax0gjabdj30us105wk3.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>发售</b>DK-86 2026年10月22日起；DK-69B / DK-61G 预计11月中旬</i></div><a class="src" href="https://weibo.com/7841096704/RnOHDveQh" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@DNA_Design</span></a><span class="tags"><em>#变形金刚</em><em>#DNA Design</em><em>#发货进度</em></span></div></div></article>
+<article class="card" data-type="发售" data-rel="低" data-isnew="1" data-ukey="megahouse|五条悟" data-first="1" data-search="megahouse 咒术回战 五条悟 dx figure 塑唐上架 megahouse「dx figure」咒术回战 五条悟 虚式「茈」ver.，现货已上架并放出实拍展示。 塑唐玩具     发售"><span class="idx">10</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-sale">发售</span><span class="rel r-low">低相关</span><span class="time">2026-10-22 17:41</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1780846941/RnRAKxikR" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">MegaHouse</span> · <span class="brand">五条悟 / 咒术回战</span> · <span class="line">DX FIGURE</span></a></h3><p class="sum">塑唐上架 MegaHouse「DX FIGURE」咒术回战 五条悟 虚式「茈」ver.，现货已上架并放出实拍展示。</p><div class="why">相关理由：非主营 IP，客群重合度低</div></div><div class="side"><a class="src" href="https://weibo.com/1780846941/RnRAKxikR" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@塑唐玩具</span></a><span class="tags"><em>#咒术回战</em><em>#MegaHouse</em><em>#现货</em></span></div></div></article>
+<article class="card" data-type="发售" data-rel="低" data-isnew="1" data-ukey="dakila|汉甲人仔" data-first="1" data-search="dakila   汉甲人仔 dakila epicwin 荣耀传奇「汉甲人仔」进入出货准备阶段，公布建议零售价：h01 霍去病 158 元、h02 虎骑 148 元、h03 刀卫 148 元，三只套装 438 元。 dakila h01 霍去病 158 元 / h02 虎骑 148 元 / h03 刀卫 148 元 / 三只套装 438 元    发售"><span class="idx">11</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-sale">发售</span><span class="rel r-low">低相关</span><span class="time">2026-10-22 13:25</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/3944259253/RnPUuleNs" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">DAKILA</span> · <span class="line">汉甲人仔</span></a></h3><p class="sum">DAKILA Epicwin 荣耀传奇「汉甲人仔」进入出货准备阶段，公布建议零售价：H01 霍去病 158 元、H02 虎骑 148 元、H03 刀卫 148 元，三只套装 438 元。</p><div class="why">相关理由：国风可动人仔，非主营 IP，仅作品类参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/3944259253/RnPUuleNs" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/eb189eb5gy1iib299531dj23402c0u0y.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>参考价</b>H01 霍去病 158 元 / H02 虎骑 148 元 / H03 刀卫 148 元 / 三只套装 438 元</i></div><a class="src" href="https://weibo.com/3944259253/RnPUuleNs" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@DAKILA</span></a><span class="tags"><em>#DAKILA</em><em>#汉甲人仔</em><em>#国风</em><em>#出货</em></span></div></div></article>
+<article class="card" data-type="发售" data-rel="低" data-isnew="1" data-ukey="大漫匠|幼熙" data-first="1" data-search="大漫匠  幼熙 甜心奇迹ver. 大漫匠「幼熙-甜心奇迹ver.」1/7 手办开启补款，补款日期截至 10 月 28 日。 大漫匠animester  补款截止 2026年10月28日  1/7 发售"><span class="idx">12</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-sale">发售</span><span class="rel r-low">低相关</span><span class="time">2026-10-22 16:11</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7521335444/RnR0c83MH" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">大漫匠</span> · <span class="brand">幼熙</span> · <span class="line">甜心奇迹Ver.</span></a></h3><p class="sum">大漫匠「幼熙-甜心奇迹Ver.」1/7 手办开启补款，补款日期截至 10 月 28 日。</p><div class="why">相关理由：国产美少女手办，非主营品类</div></div><div class="side"><div class="thumbs"><a class="thumb tre" href="https://weibo.com/7521335444/RnR0c83MH" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/008d0KW0gy1ihj8q1uzpgj315o1qiu0y.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>发售</b>补款截止 2026年10月28日</i><i><b>比例</b>1/7</i></div><a class="src" href="https://weibo.com/7521335444/RnR0c83MH" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@大漫匠Animester</span></a><span class="tags"><em>#大漫匠</em><em>#幼熙</em><em>#补款</em></span></div></div></article>
+<article class="card" data-type="发售" data-rel="低" data-isnew="1" data-ukey="大漫匠|美杜莎" data-first="1" data-search="大漫匠  美杜莎 easy pick · 雾纱 大漫匠乙巳蛇年岁末献礼「美杜莎-雾纱」1/7 手办（easy pick 系列）开启补款，补款日期截至 10 月 28 日。 大漫匠animester  补款截止 2026年10月28日  1/7 发售"><span class="idx">13</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-sale">发售</span><span class="rel r-low">低相关</span><span class="time">2026-10-22 16:11</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7521335444/RnQZVqdsm" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">大漫匠</span> · <span class="brand">美杜莎</span> · <span class="line">Easy Pick · 雾纱</span></a></h3><p class="sum">大漫匠乙巳蛇年岁末献礼「美杜莎-雾纱」1/7 手办（Easy Pick 系列）开启补款，补款日期截至 10 月 28 日。</p><div class="why">相关理由：国产美少女手办，非主营品类</div></div><div class="side"><div class="thumbs"><a class="thumb tre" href="https://weibo.com/7521335444/RnQZVqdsm" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/008d0KW0gy1ihj8dwac6jj31jk2bcqv5.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>发售</b>补款截止 2026年10月28日</i><i><b>比例</b>1/7</i></div><a class="src" href="https://weibo.com/7521335444/RnQZVqdsm" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@大漫匠Animester</span></a><span class="tags"><em>#大漫匠</em><em>#美杜莎</em><em>#补款</em></span></div></div></article>
+<article class="card" data-type="再版" data-rel="中" data-isnew="1" data-ukey="形刻|雷霆雅塔莱斯" data-first="1" data-search="形刻 铠甲勇士 雷霆雅塔莱斯  形刻「雷霆·雅塔莱斯」再版落地，为炎龙、帝皇后第三个再版优化作品：重制胸前拿瓦火焰浮雕、新增变色龙炫彩涂装、修正不对称腿甲纹理、背部新增光翼分件、替换手型材质更有弹性；配件取消初版天地雷霆剑与电光雷霆剑，改为常态天地雷霆剑＋巨大雷霆之翼。 模魂工作室     再版"><span class="idx">14</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-reprint">再版</span><span class="rel r-mid">中相关</span><span class="time">2026-10-23 08:48</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/3937516811/RnXwxz2Fa" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">形刻</span> · <span class="brand">雷霆雅塔莱斯 / 铠甲勇士</span></a></h3><p class="sum">形刻「雷霆·雅塔莱斯」再版落地，为炎龙、帝皇后第三个再版优化作品：重制胸前拿瓦火焰浮雕、新增变色龙炫彩涂装、修正不对称腿甲纹理、背部新增光翼分件、替换手型材质更有弹性；配件取消初版天地雷霆剑与电光雷霆剑，改为常态天地雷霆剑＋巨大雷霆之翼。</p><div class="why">相关理由：国产可动成品再版，可作特摄品类参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/3937516811/RnXwxz2Fa" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 16 张）" title="点开原微博看大图（共 16 张）"><img src="media/thumb/eab1bd0bgy1iibzsu7fazj21e01uo4qp.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/3937516811/RnXwxz2Fa" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 16 张）" title="点开原微博看大图（共 16 张）"><img src="media/thumb/eab1bd0bgy1iibzswn7mnj21e11uoe81.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/3937516811/RnXwxz2Fa" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 16 张）" title="点开原微博看大图（共 16 张）"><img src="media/thumb/eab1bd0bgy1iibzujgztcj21uo1uoe81.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+13</span></a></div><a class="src" href="https://weibo.com/3937516811/RnXwxz2Fa" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@模魂工作室</span></a><span class="tags"><em>#铠甲勇士</em><em>#形刻</em><em>#再版</em></span></div></div></article>
+<article class="card" data-type="展会" data-rel="中" data-isnew="1" data-ukey="megahouse|超级阿斯拉达01" data-search="megahouse 高智能方程式 超级阿斯拉达01 c.f.c. -heritage edition- limited megahouse 公布 2026 杭州国际模型文化节会场限定品：「c.f.c.」-heritage edition- limited 高智能方程式 超级阿斯拉达01 赛道模式 霓虹蓝版，售价 299 元/台，每人每日限购 1 台，售完即止。 塑唐玩具 299 元/台 2026年10月30日-11月1日（会场限定） 2026杭州国际模型文化节 塑唐玩具展位 1f-a18，每人每日限购1台  展会"><span class="idx">15</span><div class="head"><span class="badge t-event">展会</span><span class="rank rank-1">会场限定</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 14:41</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1780846941/RnQpl09Sf" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">MegaHouse</span> · <span class="brand">超级阿斯拉达01 / 高智能方程式</span> · <span class="line">C.F.C. -Heritage Edition- LIMITED</span></a></h3><p class="sum">MegaHouse 公布 2026 杭州国际模型文化节会场限定品：「C.F.C.」-Heritage Edition- LIMITED 高智能方程式 超级阿斯拉达01 赛道模式 霓虹蓝版，售价 299 元/台，每人每日限购 1 台，售完即止。</p><div class="why">相关理由：会场限定模型，属品类拓展参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1780846941/RnQpl09Sf" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/6a25915dly1iib4j94j2xj21b91r0x6q.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>参考价</b>299 元/台</i><i><b>发售</b>2026年10月30日-11月1日（会场限定）</i><i><b>渠道</b>2026杭州国际模型文化节 塑唐玩具展位 1F-A18，每人每日限购1台</i></div><a class="src" href="https://weibo.com/1780846941/RnQpl09Sf" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@塑唐玩具</span></a><span class="tags"><em>#高智能方程式</em><em>#MegaHouse</em><em>#会场限定</em><em>#杭州模型文化节</em></span></div></div></article>
+<article class="card" data-type="实物测评" data-rel="中" data-isnew="1" data-ukey="threezero|zero" data-first="1" data-search="threezero 洛克人x zero mdlx threezero mdlx 洛克人x zero 实物把玩：12.5cm、约36个关节，金属＋工程塑料结构，脚掌内藏磁石可吸附金属表面；配件含 zero 能源炮手臂、z 军刀、两款激光刀刃、刀特效件、两个表情脸与三种手型，可动良好、涂装细腻。 萌猴爱模玩    高约12.5cm · 约36个可动关节 实物测评"><span class="idx">16</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-review">实物测评</span><span class="rank rank-1">首次实物曝光</span><span class="rel r-mid">中相关</span><span class="time">2026-10-23 08:00</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7435192480/RnXd2bBXh" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">threezero</span> · <span class="brand">Zero / 洛克人X</span> · <span class="line">MDLX</span></a></h3><p class="sum">threezero MDLX 洛克人X Zero 实物把玩：12.5cm、约36个关节，金属＋工程塑料结构，脚掌内藏磁石可吸附金属表面；配件含 Zero 能源炮手臂、Z 军刀、两款激光刀刃、刀特效件、两个表情脸与三种手型，可动良好、涂装细腻。</p><div class="why">相关理由：threezero MDLX 为 62 店在售产品线，可动成品参考</div></div><div class="side"><div class="facts"><i><b>比例</b>高约12.5cm · 约36个可动关节</i></div><a class="src" href="https://weibo.com/7435192480/RnXd2bBXh" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@萌猴爱模玩</span></a><span class="tags"><em>#洛克人X</em><em>#threezero</em><em>#MDLX</em><em>#实物</em></span></div></div></article>
+<article class="card" data-type="实物测评" data-rel="低" data-isnew="1" data-ukey="transbots|拖斗" data-first="1" data-search="transbots 变形金刚 拖斗 x社大力神 博主放出 transbots x社大力神合体系列黄色拖斗（g2 配色成员）开箱视频。 少主狸卖萌时间     实物测评"><span class="idx">17</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-review">实物测评</span><span class="rank rank-1">首次实物曝光</span><span class="rel r-low">低相关</span><span class="time">2026-10-22 21:21</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/2809645763/RnT1TDyl0" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">TRANSBOTS</span> · <span class="brand">拖斗 / 变形金刚</span> · <span class="line">X社大力神</span></a></h3><p class="sum">博主放出 TRANSBOTS X社大力神合体系列黄色拖斗（G2 配色成员）开箱视频。</p><div class="why">相关理由：该款 9 月已报出货，本条仅为开箱把玩</div></div><div class="side"><a class="src" href="https://weibo.com/2809645763/RnT1TDyl0" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@少主狸卖萌时间</span></a><span class="tags"><em>#变形金刚</em><em>#TRANSBOTS</em><em>#大力神</em><em>#开箱</em></span></div></div></article></div></section>
+<section class="group group-all" data-group="新品公布"><h2><span class="badge t-new">新品公布</span><span class="gn">8 条</span><span class="gbar"></span></h2><div class="grid"><article class="card" data-type="新品公布" data-rel="高" data-isnew="1" data-ukey="dna design|煞星" data-first="1" data-search="dna design 变形金刚 煞星 dk dna design 公布 dk-100a gear master 升级包，适配 haslab 煞星：含七把专属武器补足各成员配置、可变形脚部升级件改善队长身高比例、细节补洞盖板，2027年1月发售、预购截止11月5日。另有 @小白哥乌拉诺斯 晒图评价部分武器偏多余。 dna_design  2027年1月 预购截止 2026年11月5日  新品公布"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="rel r-high">高相关</span><span class="time">2026-10-22 15:46</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7841096704/RnQQ3A28w" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">DNA Design</span> · <span class="brand">煞星 / 变形金刚</span> · <span class="line">DK</span></a></h3><p class="sum">DNA Design 公布 DK-100A GEAR MASTER 升级包，适配 HasLab 煞星：含七把专属武器补足各成员配置、可变形脚部升级件改善队长身高比例、细节补洞盖板，2027年1月发售、预购截止11月5日。另有 @小白哥乌拉诺斯 晒图评价部分武器偏多余。</p><div class="why">相关理由：DNA DK 系列配件包，62 店长期在售同类，属直接选品线</div><div class="reports"><span class="k">另有 1 条报道：</span><span><a href="https://weibo.com/1918541453/RnTDaoxYW" target="_blank" rel="noopener noreferrer">@小白哥乌拉诺斯 ↗</a><span class="k">2026-10-22 22:53</span></span></div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/7841096704/RnQQ3A28w" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 28 张）" title="点开原微博看大图（共 28 张）"><img src="media/thumb/008yErrGly8iib6fud0wxj31lw1da7l6.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/7841096704/RnQQ3A28w" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 28 张）" title="点开原微博看大图（共 28 张）"><img src="media/thumb/008yErrGly8iib6fuanc7j31lw1daqnz.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/7841096704/RnQQ3A28w" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 28 张）" title="点开原微博看大图（共 28 张）"><img src="media/thumb/008yErrGly8iib6fue911j31lw1dae19.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+25</span></a></div><div class="facts"><i><b>发售</b>2027年1月</i><i><b>渠道</b>预购截止 2026年11月5日</i></div><a class="src" href="https://weibo.com/7841096704/RnQQ3A28w" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@DNA_Design</span></a><span class="tags"><em>#变形金刚</em><em>#DNA Design</em><em>#煞星</em><em>#配件包</em></span></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-ukey="megahouse|lookup" data-first="1" data-search="megahouse   lookup 塑唐上架 lookup 10 月新品合集，覆盖鬼灭之刃（我妻善逸/狯岳）、转生史莱姆（利姆鲁/迪亚波罗）、死神（乌尔奇奥拉/葛力姆乔）、火影忍者（奈良鹿丸/我爱罗）、超辉夜姬（月见八千代）、青春之箱（鹿野千夏）、刀剑乱舞（山姥切长义/山姥切国广）、排球少年（日向翔阳/影山飞雄 队服ver.）共十余款，已开放预定。 塑唐玩具     新品公布"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 10:44</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1780846941/RnORn3ZUN" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">MegaHouse</span> · <span class="line">Lookup</span></a></h3><p class="sum">塑唐上架 Lookup 10 月新品合集，覆盖鬼灭之刃（我妻善逸/狯岳）、转生史莱姆（利姆鲁/迪亚波罗）、死神（乌尔奇奥拉/葛力姆乔）、火影忍者（奈良鹿丸/我爱罗）、超辉夜姬（月见八千代）、青春之箱（鹿野千夏）、刀剑乱舞（山姥切长义/山姥切国广）、排球少年（日向翔阳/影山飞雄 队服Ver.）共十余款，已开放预定。</p><div class="why">相关理由：Q 版手办多 IP 合集，可作品类拓展参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1780846941/RnORn3ZUN" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/6a25915dly1iiaxp164z1j213z1hbtxw.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1780846941/RnORn3ZUN" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/6a25915dly1iiaxp0u4o3j20zi1bcjvh.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1780846941/RnORn3ZUN" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/6a25915dly1iiaxp0u8j3j20zi1bcgs3.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+6</span></a></div><a class="src" href="https://weibo.com/1780846941/RnORn3ZUN" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@塑唐玩具</span></a><span class="tags"><em>#Lookup</em><em>#MegaHouse</em><em>#塑唐</em><em>#新品合集</em></span></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-ukey="52toys|工程师" data-search="52toys 普罗米修斯 工程师 1/12 可动人偶 928 toys laboratory 放出 52toys 1/12 可动人偶「engineer pressure suit」官图，题材取自《普罗米修斯》的工程师（engineer）压力服造型，配黑色培养罐道具，标注 coming soon。 928_toys_laboratory    1/12 新品公布"><div class="head"><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 14:53</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/5490307047/RnQuo09xJ" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">52TOYS</span> · <span class="brand">工程师 / 普罗米修斯</span> · <span class="line">1/12 可动人偶</span></a></h3><p class="sum">928 Toys Laboratory 放出 52TOYS 1/12 可动人偶「ENGINEER PRESSURE SUIT」官图，题材取自《普罗米修斯》的工程师（Engineer）压力服造型，配黑色培养罐道具，标注 COMING SOON。</p><div class="why">相关理由：1/12 可动人偶，硬核影视 IP 品类参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/5490307047/RnQuo09xJ" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/005ZyLFtgy1iib4wco3ywj31d81tmb29.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>比例</b>1/12</i></div><a class="src" href="https://weibo.com/5490307047/RnQuo09xJ" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@928_Toys_Laboratory</span></a><span class="tags"><em>#52TOYS</em><em>#普罗米修斯</em><em>#1/12</em><em>#可动人偶</em></span></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-ukey="孩之宝|marvel legends" data-search="孩之宝 x战警  marvel legends 孩之宝公布 marvel legends x-men &#x27;97 六款新品：jean grey、cyclops、polaris、havok、vindicator、gambit。 小白哥乌拉诺斯     新品公布"><div class="head"><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 19:04</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1918541453/RnS8qkeFe" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">孩之宝</span> · <span class="brand">X战警</span> · <span class="line">Marvel Legends</span></a></h3><p class="sum">孩之宝公布 Marvel Legends X-Men &#x27;97 六款新品：Jean Grey、Cyclops、Polaris、Havok、Vindicator、Gambit。</p><div class="why">相关理由：孩之宝 6 寸可动人偶，与变形金刚同厂但非主营 IP</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1918541453/RnS8qkeFe" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 7 张）" title="点开原微博看大图（共 7 张）"><img src="media/thumb/725a9e8dgy1iibc4u7sjcj20lc0g0wh2.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/RnS8qkeFe" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 7 张）" title="点开原微博看大图（共 7 张）"><img src="media/thumb/725a9e8dgy1iibc4ul2vdj21jk1jkdkc.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/RnS8qkeFe" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 7 张）" title="点开原微博看大图（共 7 张）"><img src="media/thumb/725a9e8dgy1iibc4v1nhcj21jk1jk0wb.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+4</span></a></div><a class="src" href="https://weibo.com/1918541453/RnS8qkeFe" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@小白哥乌拉诺斯</span></a><span class="tags"><em>#X战警</em><em>#孩之宝</em><em>#Marvel Legends</em></span></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-ukey="布鲁可|哥莫拉" data-first="1" data-search="布鲁可 奥特曼 / 初音未来 哥莫拉 绮遇记 布鲁可积木人「绮遇记」1/12 奥特曼 × 初音未来联名系列「怪兽派对」哥莫拉款即将上新，官方放出剪影预热图。 布鲁可积木人    1/12 新品公布"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-23 10:00</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7790031436/RnXZJbVFC" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">布鲁可</span> · <span class="brand">哥莫拉 / 奥特曼 / 初音未来</span> · <span class="line">绮遇记</span></a></h3><p class="sum">布鲁可积木人「绮遇记」1/12 奥特曼 × 初音未来联名系列「怪兽派对」哥莫拉款即将上新，官方放出剪影预热图。</p><div class="why">相关理由：布鲁可为 62 店常报品牌，联名线可作品类参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/7790031436/RnXZJbVFC" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/008vcb2kgy1iibazwwzsjj311u1eeazr.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>比例</b>1/12</i></div><a class="src" href="https://weibo.com/7790031436/RnXZJbVFC" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@布鲁可积木人</span></a><span class="tags"><em>#布鲁可</em><em>#奥特曼</em><em>#初音未来</em><em>#联名</em></span></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-ukey="yolopark|御天敌" data-search="yolopark 变形金刚 御天敌 amk pro yolopark amk pro 系列《变形金刚3：月黑之时》御天敌（sentinel prime）官图更新。 小白哥乌拉诺斯     新品公布"><div class="head"><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 19:31</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1918541453/RnSj62k8S" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">YOLOPARK</span> · <span class="brand">御天敌 / 变形金刚</span> · <span class="line">AMK PRO</span></a></h3><p class="sum">YOLOPARK AMK PRO 系列《变形金刚3：月黑之时》御天敌（Sentinel Prime）官图更新。</p><div class="why">相关理由：变形金刚拼装线，62 店同类在售</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1918541453/RnSj62k8S" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 6 张）" title="点开原微博看大图（共 6 张）"><img src="media/thumb/725a9e8dgy1iibcws4ndyj219i1kwqbt.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/RnSj62k8S" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 6 张）" title="点开原微博看大图（共 6 张）"><img src="media/thumb/725a9e8dgy1iibcwshnjqj219i1kwqb6.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/RnSj62k8S" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 6 张）" title="点开原微博看大图（共 6 张）"><img src="media/thumb/725a9e8dgy1iibcwsxk3rj219i1kwqbm.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+3</span></a></div><a class="src" href="https://weibo.com/1918541453/RnSj62k8S" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@小白哥乌拉诺斯</span></a><span class="tags"><em>#变形金刚</em><em>#YOLOPARK</em><em>#御天敌</em><em>#官图</em></span></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-ukey="na_newage|警车 / 烟幕 / 蓝霹雳" data-first="1" data-search="na_newage 变形金刚 警车 / 烟幕 / 蓝霹雳 na 2.0 na_newage 警车 2.0 重制版 2026 新模公布，同模衍生烟幕、蓝霹雳，博主放出变形演示视频。 莽姆森     新品公布"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 18:30</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1735145277/RnRUfeWCK" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">NA_NEWAGE</span> · <span class="brand">警车 / 烟幕 / 蓝霹雳 / 变形金刚</span> · <span class="line">NA 2.0</span></a></h3><p class="sum">NA_NEWAGE 警车 2.0 重制版 2026 新模公布，同模衍生烟幕、蓝霹雳，博主放出变形演示视频。</p><div class="why">相关理由：小比例变形玩具，62 店同类产品线</div></div><div class="side"><a class="src" href="https://weibo.com/1735145277/RnRUfeWCK" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@莽姆森</span></a><span class="tags"><em>#变形金刚</em><em>#NA_NEWAGE</em><em>#警车</em><em>#变形演示</em></span></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-ukey="mezco|僵尸" data-first="1" data-search="mezco  僵尸 one:12 collective mezco 公布 one:12 collective 系列 hopping vampire: jiangshi（跳尸·僵尸）6 寸可动人偶，定价 119 美元。 小白哥乌拉诺斯 $119   6寸 新品公布"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 18:59</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1918541453/RnS6cr9oH" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">Mezco</span> · <span class="brand">僵尸</span> · <span class="line">One:12 Collective</span></a></h3><p class="sum">Mezco 公布 One:12 Collective 系列 Hopping Vampire: Jiangshi（跳尸·僵尸）6 寸可动人偶，定价 119 美元。</p><div class="why">相关理由：6 寸可动人偶，题材新颖可作选品参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1918541453/RnS6cr9oH" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 13 张）" title="点开原微博看大图（共 13 张）"><img src="media/thumb/725a9e8dgy1iibbzwe7ibj20m80m840o.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/RnS6cr9oH" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 13 张）" title="点开原微博看大图（共 13 张）"><img src="media/thumb/725a9e8dgy1iibbzwtkx1j20m80m8tag.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/RnS6cr9oH" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 13 张）" title="点开原微博看大图（共 13 张）"><img src="media/thumb/725a9e8dgy1iibbzx7a8jj20m80m8q4y.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+10</span></a></div><div class="facts"><i><b>参考价</b>$119</i><i><b>比例</b>6寸</i></div><a class="src" href="https://weibo.com/1918541453/RnS6cr9oH" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@小白哥乌拉诺斯</span></a><span class="tags"><em>#Mezco</em><em>#One:12</em><em>#僵尸</em><em>#6寸</em></span></div></div></article></div></section>
+<section class="group group-all" data-group="发售"><h2><span class="badge t-sale">发售</span><span class="gn">5 条</span><span class="gbar"></span></h2><div class="grid"><article class="card" data-type="发售" data-rel="中" data-isnew="1" data-ukey="dna design|dk" data-search="dna design 变形金刚  dk dna design 发货与生产进度公告：dk-86 自10月22日起陆续发货；dk-69b、dk-61g 已进入正式生产、预计11月中旬陆续发货；dk-45/45n/82/85/43d/89/90 已收到量产前确认样品，本周将陆续公布进度。 dna_design  dk-86 2026年10月22日起；dk-69b / dk-61g 预计11月中旬   发售"><div class="head"><span class="badge t-sale">发售</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 10:20</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7841096704/RnOHDveQh" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">DNA Design</span> · <span class="brand">变形金刚</span> · <span class="line">DK</span></a></h3><p class="sum">DNA Design 发货与生产进度公告：DK-86 自10月22日起陆续发货；DK-69B、DK-61G 已进入正式生产、预计11月中旬陆续发货；DK-45/45N/82/85/43D/89/90 已收到量产前确认样品，本周将陆续公布进度。</p><div class="why">相关理由：DK 系列为 62 店在售配件线，发货进度影响补货节奏</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/7841096704/RnOHDveQh" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 2 张）" title="点开原微博看大图（共 2 张）"><img src="media/thumb/008yErrGly8iiax0gj7lij30us1520zb.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/7841096704/RnOHDveQh" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 2 张）" title="点开原微博看大图（共 2 张）"><img src="media/thumb/008yErrGly8iiax0gjabdj30us105wk3.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>发售</b>DK-86 2026年10月22日起；DK-69B / DK-61G 预计11月中旬</i></div><a class="src" href="https://weibo.com/7841096704/RnOHDveQh" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@DNA_Design</span></a><span class="tags"><em>#变形金刚</em><em>#DNA Design</em><em>#发货进度</em></span></div></div></article>
+<article class="card" data-type="发售" data-rel="低" data-isnew="1" data-ukey="megahouse|五条悟" data-first="1" data-search="megahouse 咒术回战 五条悟 dx figure 塑唐上架 megahouse「dx figure」咒术回战 五条悟 虚式「茈」ver.，现货已上架并放出实拍展示。 塑唐玩具     发售"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-sale">发售</span><span class="rel r-low">低相关</span><span class="time">2026-10-22 17:41</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1780846941/RnRAKxikR" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">MegaHouse</span> · <span class="brand">五条悟 / 咒术回战</span> · <span class="line">DX FIGURE</span></a></h3><p class="sum">塑唐上架 MegaHouse「DX FIGURE」咒术回战 五条悟 虚式「茈」ver.，现货已上架并放出实拍展示。</p><div class="why">相关理由：非主营 IP，客群重合度低</div></div><div class="side"><a class="src" href="https://weibo.com/1780846941/RnRAKxikR" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@塑唐玩具</span></a><span class="tags"><em>#咒术回战</em><em>#MegaHouse</em><em>#现货</em></span></div></div></article>
+<article class="card" data-type="发售" data-rel="低" data-isnew="1" data-ukey="dakila|汉甲人仔" data-first="1" data-search="dakila   汉甲人仔 dakila epicwin 荣耀传奇「汉甲人仔」进入出货准备阶段，公布建议零售价：h01 霍去病 158 元、h02 虎骑 148 元、h03 刀卫 148 元，三只套装 438 元。 dakila h01 霍去病 158 元 / h02 虎骑 148 元 / h03 刀卫 148 元 / 三只套装 438 元    发售"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-sale">发售</span><span class="rel r-low">低相关</span><span class="time">2026-10-22 13:25</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/3944259253/RnPUuleNs" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">DAKILA</span> · <span class="line">汉甲人仔</span></a></h3><p class="sum">DAKILA Epicwin 荣耀传奇「汉甲人仔」进入出货准备阶段，公布建议零售价：H01 霍去病 158 元、H02 虎骑 148 元、H03 刀卫 148 元，三只套装 438 元。</p><div class="why">相关理由：国风可动人仔，非主营 IP，仅作品类参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/3944259253/RnPUuleNs" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/eb189eb5gy1iib299531dj23402c0u0y.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>参考价</b>H01 霍去病 158 元 / H02 虎骑 148 元 / H03 刀卫 148 元 / 三只套装 438 元</i></div><a class="src" href="https://weibo.com/3944259253/RnPUuleNs" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@DAKILA</span></a><span class="tags"><em>#DAKILA</em><em>#汉甲人仔</em><em>#国风</em><em>#出货</em></span></div></div></article>
+<article class="card" data-type="发售" data-rel="低" data-isnew="1" data-ukey="大漫匠|幼熙" data-first="1" data-search="大漫匠  幼熙 甜心奇迹ver. 大漫匠「幼熙-甜心奇迹ver.」1/7 手办开启补款，补款日期截至 10 月 28 日。 大漫匠animester  补款截止 2026年10月28日  1/7 发售"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-sale">发售</span><span class="rel r-low">低相关</span><span class="time">2026-10-22 16:11</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7521335444/RnR0c83MH" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">大漫匠</span> · <span class="brand">幼熙</span> · <span class="line">甜心奇迹Ver.</span></a></h3><p class="sum">大漫匠「幼熙-甜心奇迹Ver.」1/7 手办开启补款，补款日期截至 10 月 28 日。</p><div class="why">相关理由：国产美少女手办，非主营品类</div></div><div class="side"><div class="thumbs"><a class="thumb tre" href="https://weibo.com/7521335444/RnR0c83MH" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/008d0KW0gy1ihj8q1uzpgj315o1qiu0y.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>发售</b>补款截止 2026年10月28日</i><i><b>比例</b>1/7</i></div><a class="src" href="https://weibo.com/7521335444/RnR0c83MH" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@大漫匠Animester</span></a><span class="tags"><em>#大漫匠</em><em>#幼熙</em><em>#补款</em></span></div></div></article>
+<article class="card" data-type="发售" data-rel="低" data-isnew="1" data-ukey="大漫匠|美杜莎" data-first="1" data-search="大漫匠  美杜莎 easy pick · 雾纱 大漫匠乙巳蛇年岁末献礼「美杜莎-雾纱」1/7 手办（easy pick 系列）开启补款，补款日期截至 10 月 28 日。 大漫匠animester  补款截止 2026年10月28日  1/7 发售"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-sale">发售</span><span class="rel r-low">低相关</span><span class="time">2026-10-22 16:11</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7521335444/RnQZVqdsm" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">大漫匠</span> · <span class="brand">美杜莎</span> · <span class="line">Easy Pick · 雾纱</span></a></h3><p class="sum">大漫匠乙巳蛇年岁末献礼「美杜莎-雾纱」1/7 手办（Easy Pick 系列）开启补款，补款日期截至 10 月 28 日。</p><div class="why">相关理由：国产美少女手办，非主营品类</div></div><div class="side"><div class="thumbs"><a class="thumb tre" href="https://weibo.com/7521335444/RnQZVqdsm" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/008d0KW0gy1ihj8dwac6jj31jk2bcqv5.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>发售</b>补款截止 2026年10月28日</i><i><b>比例</b>1/7</i></div><a class="src" href="https://weibo.com/7521335444/RnQZVqdsm" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@大漫匠Animester</span></a><span class="tags"><em>#大漫匠</em><em>#美杜莎</em><em>#补款</em></span></div></div></article></div></section>
+<section class="group group-all" data-group="再版"><h2><span class="badge t-reprint">再版</span><span class="gn">1 条</span><span class="gbar"></span></h2><div class="grid"><article class="card" data-type="再版" data-rel="中" data-isnew="1" data-ukey="形刻|雷霆雅塔莱斯" data-first="1" data-search="形刻 铠甲勇士 雷霆雅塔莱斯  形刻「雷霆·雅塔莱斯」再版落地，为炎龙、帝皇后第三个再版优化作品：重制胸前拿瓦火焰浮雕、新增变色龙炫彩涂装、修正不对称腿甲纹理、背部新增光翼分件、替换手型材质更有弹性；配件取消初版天地雷霆剑与电光雷霆剑，改为常态天地雷霆剑＋巨大雷霆之翼。 模魂工作室     再版"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-reprint">再版</span><span class="rel r-mid">中相关</span><span class="time">2026-10-23 08:48</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/3937516811/RnXwxz2Fa" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">形刻</span> · <span class="brand">雷霆雅塔莱斯 / 铠甲勇士</span></a></h3><p class="sum">形刻「雷霆·雅塔莱斯」再版落地，为炎龙、帝皇后第三个再版优化作品：重制胸前拿瓦火焰浮雕、新增变色龙炫彩涂装、修正不对称腿甲纹理、背部新增光翼分件、替换手型材质更有弹性；配件取消初版天地雷霆剑与电光雷霆剑，改为常态天地雷霆剑＋巨大雷霆之翼。</p><div class="why">相关理由：国产可动成品再版，可作特摄品类参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/3937516811/RnXwxz2Fa" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 16 张）" title="点开原微博看大图（共 16 张）"><img src="media/thumb/eab1bd0bgy1iibzsu7fazj21e01uo4qp.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/3937516811/RnXwxz2Fa" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 16 张）" title="点开原微博看大图（共 16 张）"><img src="media/thumb/eab1bd0bgy1iibzswn7mnj21e11uoe81.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/3937516811/RnXwxz2Fa" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 16 张）" title="点开原微博看大图（共 16 张）"><img src="media/thumb/eab1bd0bgy1iibzujgztcj21uo1uoe81.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+13</span></a></div><a class="src" href="https://weibo.com/3937516811/RnXwxz2Fa" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@模魂工作室</span></a><span class="tags"><em>#铠甲勇士</em><em>#形刻</em><em>#再版</em></span></div></div></article></div></section>
+<section class="group group-all" data-group="展会"><h2><span class="badge t-event">展会</span><span class="gn">1 条</span><span class="gbar"></span></h2><div class="grid"><article class="card" data-type="展会" data-rel="中" data-isnew="1" data-ukey="megahouse|超级阿斯拉达01" data-search="megahouse 高智能方程式 超级阿斯拉达01 c.f.c. -heritage edition- limited megahouse 公布 2026 杭州国际模型文化节会场限定品：「c.f.c.」-heritage edition- limited 高智能方程式 超级阿斯拉达01 赛道模式 霓虹蓝版，售价 299 元/台，每人每日限购 1 台，售完即止。 塑唐玩具 299 元/台 2026年10月30日-11月1日（会场限定） 2026杭州国际模型文化节 塑唐玩具展位 1f-a18，每人每日限购1台  展会"><div class="head"><span class="badge t-event">展会</span><span class="rank rank-1">会场限定</span><span class="rel r-mid">中相关</span><span class="time">2026-10-22 14:41</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1780846941/RnQpl09Sf" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">MegaHouse</span> · <span class="brand">超级阿斯拉达01 / 高智能方程式</span> · <span class="line">C.F.C. -Heritage Edition- LIMITED</span></a></h3><p class="sum">MegaHouse 公布 2026 杭州国际模型文化节会场限定品：「C.F.C.」-Heritage Edition- LIMITED 高智能方程式 超级阿斯拉达01 赛道模式 霓虹蓝版，售价 299 元/台，每人每日限购 1 台，售完即止。</p><div class="why">相关理由：会场限定模型，属品类拓展参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1780846941/RnQpl09Sf" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/6a25915dly1iib4j94j2xj21b91r0x6q.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>参考价</b>299 元/台</i><i><b>发售</b>2026年10月30日-11月1日（会场限定）</i><i><b>渠道</b>2026杭州国际模型文化节 塑唐玩具展位 1F-A18，每人每日限购1台</i></div><a class="src" href="https://weibo.com/1780846941/RnQpl09Sf" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@塑唐玩具</span></a><span class="tags"><em>#高智能方程式</em><em>#MegaHouse</em><em>#会场限定</em><em>#杭州模型文化节</em></span></div></div></article></div></section>
+<section class="group group-all" data-group="实物测评"><h2><span class="badge t-review">实物测评</span><span class="gn">2 条</span><span class="gbar"></span></h2><div class="grid"><article class="card" data-type="实物测评" data-rel="中" data-isnew="1" data-ukey="threezero|zero" data-first="1" data-search="threezero 洛克人x zero mdlx threezero mdlx 洛克人x zero 实物把玩：12.5cm、约36个关节，金属＋工程塑料结构，脚掌内藏磁石可吸附金属表面；配件含 zero 能源炮手臂、z 军刀、两款激光刀刃、刀特效件、两个表情脸与三种手型，可动良好、涂装细腻。 萌猴爱模玩    高约12.5cm · 约36个可动关节 实物测评"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-review">实物测评</span><span class="rank rank-1">首次实物曝光</span><span class="rel r-mid">中相关</span><span class="time">2026-10-23 08:00</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7435192480/RnXd2bBXh" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">threezero</span> · <span class="brand">Zero / 洛克人X</span> · <span class="line">MDLX</span></a></h3><p class="sum">threezero MDLX 洛克人X Zero 实物把玩：12.5cm、约36个关节，金属＋工程塑料结构，脚掌内藏磁石可吸附金属表面；配件含 Zero 能源炮手臂、Z 军刀、两款激光刀刃、刀特效件、两个表情脸与三种手型，可动良好、涂装细腻。</p><div class="why">相关理由：threezero MDLX 为 62 店在售产品线，可动成品参考</div></div><div class="side"><div class="facts"><i><b>比例</b>高约12.5cm · 约36个可动关节</i></div><a class="src" href="https://weibo.com/7435192480/RnXd2bBXh" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@萌猴爱模玩</span></a><span class="tags"><em>#洛克人X</em><em>#threezero</em><em>#MDLX</em><em>#实物</em></span></div></div></article>
+<article class="card" data-type="实物测评" data-rel="低" data-isnew="1" data-ukey="transbots|拖斗" data-first="1" data-search="transbots 变形金刚 拖斗 x社大力神 博主放出 transbots x社大力神合体系列黄色拖斗（g2 配色成员）开箱视频。 少主狸卖萌时间     实物测评"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-review">实物测评</span><span class="rank rank-1">首次实物曝光</span><span class="rel r-low">低相关</span><span class="time">2026-10-22 21:21</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/2809645763/RnT1TDyl0" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">TRANSBOTS</span> · <span class="brand">拖斗 / 变形金刚</span> · <span class="line">X社大力神</span></a></h3><p class="sum">博主放出 TRANSBOTS X社大力神合体系列黄色拖斗（G2 配色成员）开箱视频。</p><div class="why">相关理由：该款 9 月已报出货，本条仅为开箱把玩</div></div><div class="side"><a class="src" href="https://weibo.com/2809645763/RnT1TDyl0" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@少主狸卖萌时间</span></a><span class="tags"><em>#变形金刚</em><em>#TRANSBOTS</em><em>#大力神</em><em>#开箱</em></span></div></div></article></div></section>
+<section class="group group-all" data-group="其他"><h2><span class="badge t-other">其他</span><span class="gn">1 条</span><span class="gbar"></span></h2><div class="grid"><article class="card" data-type="其他" data-rel="低" data-isnew="0" data-ukey="和模线|red hood" data-search="和模线 nikke red hood  原博 @和模线 就 red hood 关节优化发布说明：针对评测反馈的大幅姿势下关节受损风险重新测试并更换材料方案，强度有明显改善，产品将按新方案推进。 模魂工作室     其他"><div class="head"><span class="badge t-other">其他</span><span class="rel r-low">低相关</span><span class="time">2026-10-23 08:35</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/3937516811/RnXrithyt" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">和模线</span> · <span class="brand">RED HOOD / NIKKE</span></a></h3><p class="sum">原博 @和模线 就 RED HOOD 关节优化发布说明：针对评测反馈的大幅姿势下关节受损风险重新测试并更换材料方案，强度有明显改善，产品将按新方案推进。</p><div class="why">相关理由：已上市产品的品质改进说明，无新 SKU</div></div><div class="side"><div class="thumbs"><a class="thumb tre" href="https://weibo.com/3937516811/RnXrithyt" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/008u1nDWgy1ii9xp3mjo4j30xc1e01kx.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><a class="src" href="https://weibo.com/3937516811/RnXrithyt" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@模魂工作室</span></a><span class="tags"><em>#和模线</em><em>#NIKKE</em><em>#RED HOOD</em><em>#品质</em></span></div></div></article></div></section></div>
+  <div class="empty" id="empty" style="display:none">没有匹配的情报，换个关键词或筛选条件试试。</div>
+  <div class="legend"><span data-only-view="new">当前为 <b>新品清单</b>：只列微博里出现的新品与它们的开订 / 发售 / 再版动向，按「首次亮相 → 可下单」排序，同一款产品的多条微博已合并。</span><span data-only-view="all" hidden>当前为 <b>全部情报</b>：含实物测评、展会限定等全部类别，按类型分组。</span>　·　点击右栏缩略图可放大看原图，点标题或按钮可跳转原博（需登录微博）。　·　生成于 2026-10-23 10:10　·　点击右栏缩略图可放大看原图，点标题或按钮可跳转原博（需登录微博）。</div>
+  <div class="dayfoot" id="dayfoot"><span class="df-t">第 22 / 22 期读完</span><a class="dn-btn" href="2026-10-22.html" rel="prev"><span class="dn-ar">‹</span>上一期 10-22</a><span class="dn-btn off">已是最新一期</span><a class="dn-btn" href="archive.html">全部日期</a></div>
+</main>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="配图放大预览">
+  <button class="lb-btn lb-close" type="button" aria-label="关闭预览">×</button>
+  <button class="lb-btn lb-nav lb-prev" type="button" aria-label="上一张">‹</button>
+  <button class="lb-btn lb-nav lb-next" type="button" aria-label="下一张">›</button>
+  <img id="lb-img" alt="">
+  <div class="lb-hint" id="lb-hint" style="display:none">⚠️ 图片没加载出来 —— 请确认这个 HTML 同目录下存在 <b>media/</b> 文件夹（由 <code>attach_media.py --download</code> 生成）。</div>
+  <div class="cap" id="lb-cap"></div>
+  <div class="lb-idx" id="lb-idx"></div>
+  <a class="lb-ori" id="lb-ori" target="_blank" rel="noopener noreferrer"
+     referrerpolicy="no-referrer">查看原图 ↗</a>
+</div>
+
+<div id="probe"></div>
+<script></script>
+<script>
+(function(){
+  var q = document.getElementById('q');
+  var cards = [].slice.call(document.querySelectorAll('.card'));
+  var groups = [].slice.call(document.querySelectorAll('.group'));
+  var typeChips = [].slice.call(document.querySelectorAll('[data-type-chip]'));
+  var relChips  = [].slice.call(document.querySelectorAll('[data-rel-chip]'));
+  var viewBtns  = [].slice.call(document.querySelectorAll('[data-view]'));
+  var out = document.getElementById('count');
+  var empty = document.getElementById('empty');
+  var state = {type:'全部', rel:'全部', view:'new', unread:false};
+
+  function match(c){
+    // 两个视图各渲染一份 DOM：新品清单容器里的卡片只属于新品视图，
+    // 分类分组里的卡片只属于「全部情报」视图
+    var inNew = !!(c.closest && c.closest('.group-new'));
+    if (inNew !== (state.view === 'new')) return false;
+    // 新品视图下是纯清单、无分类，类型筛选只在「全部情报」视图生效
+    if (state.type !== '全部' && c.dataset.type !== state.type) return false;
+    if (state.rel === '高' && c.dataset.rel !== '高') return false;
+    // 「只看未读」由未读模块拨动 state.unread，只保留「本日新出现」且还没读过的卡。
+    // 两个条件都得判：只判 .read 的话，data-first="0" 的旧闻卡既不算未读、也不会被
+    // 标上 .read，会永远赖在列表里（实测 27 张未读旁边还挂着 9 张旧闻，筛完数量和
+    // 顶栏未读胶囊对不上）。总览页不渲染未读组件，state.unread 恒为 false，不受影响。
+    if (state.unread && (c.dataset.first !== '1' || c.classList.contains('read')))
+      return false;
+    var t = (q.value || '').trim().toLowerCase();
+    if (t && (c.dataset.search || '').indexOf(t) === -1) return false;
+    return true;
+}
+  function apply(){
+    var n = 0, shown = 0, total = 0;
+    cards.forEach(function(c){
+      var inNew = !!(c.closest && c.closest('.group-new'));
+      // 分母跟随当前视图：新品视图数 group-new 里的卡片，
+      // 全部情报视图数 group-all 里的卡片（否则全部视图会显示 N/新品数）
+      if (inNew === (state.view === 'new')) total++;
+      var ok = match(c);
+      c.style.display = ok ? '' : 'none';
+      if (ok) n++;
+      // 计数只统计当前视图真正可见的那份卡片
+      // （新品清单与分类分组里各渲染一份 DOM，靠所在容器区分）
+      if (ok) shown++;
+    });
+    // 分组标题随筛选联动：组内没有可见卡片就整组隐藏
+    // （纯新品清单不参与类型筛选，整体显隐由视图决定）
+    groups.forEach(function(g){
+      if (g.dataset.group === '__new__') return;
+      var vis = 0;
+      [].slice.call(g.querySelectorAll('.card')).forEach(function(c){
+        if (c.style.display !== 'none') vis++;
+      });
+      g.classList.toggle('off', vis === 0);
+    });
+    var newSec = document.querySelector('.group-new');
+    if (newSec) newSec.style.display = (state.view === 'new') ? '' : 'none';
+    out.textContent = '显示 ' + shown + ' / ' + total + ' 条';
+    empty.style.display = n ? 'none' : '';
+  }
+  typeChips.forEach(function(b){
+    b.addEventListener('click', function(){
+      state.type = b.dataset.typeChip;
+      typeChips.forEach(function(x){ x.classList.toggle('on', x === b); });
+      apply();
+    });
+  });
+  relChips.forEach(function(b){
+    b.addEventListener('click', function(){
+      state.rel = b.dataset.relChip;
+      relChips.forEach(function(x){ x.classList.toggle('on', x === b); });
+      apply();
+    });
+  });
+  viewBtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      state.view = b.dataset.view;
+      viewBtns.forEach(function(x){ x.classList.toggle('on', x === b); });
+      document.body.classList.toggle('view-new', state.view === 'new');
+      // 两个视图的类型筛选语义不同，切视图时把类型筛选重置回「全部」
+      state.type = '全部';
+      typeChips.forEach(function(x){
+        x.classList.toggle('on', x.dataset.typeChip === '全部');
+      });
+      // 纯新品清单没有分类，类型筛选条在「新品清单」视图下隐藏
+      var chipBox = document.getElementById('typeChips');
+      if (chipBox) chipBox.style.display = (state.view === 'new') ? 'none' : '';
+      apply();
+      syncViewNotes();
+    });
+  });
+  q.addEventListener('input', function(){ apply(); syncViewNotes(); });
+  function syncViewNotes(){
+    // 视图相关小字（如「当前为新品清单」提示）随视图显隐
+    document.querySelectorAll('[data-only-view]').forEach(function(el){
+      el.hidden = el.dataset.onlyView !== state.view;
+    });
+  }
+  // 初始状态：默认新品清单，类型筛选条隐藏
+  (function init(){
+    var chipBox = document.getElementById('typeChips');
+    if (chipBox) chipBox.style.display = (state.view === 'new') ? 'none' : '';
+    syncViewNotes();
+  })();
+  document.addEventListener('keydown', function(e){
+    // 放大预览打开时把键盘让给它，避免 Esc / 数字键冲突
+    if (document.body.classList.contains('lb-lock')) return;
+    if (e.key === '/' && document.activeElement !== q){ e.preventDefault(); q.focus(); }
+    if (e.key === 'Escape' && document.activeElement === q){ q.value=''; apply(); q.blur(); }
+  });
+  apply();
+  // 暴露给总览页（build_index.py）：它要在筛选链上再叠一层「按日期过滤」，
+  // 直接把 apply 包一层即可，不必复制这段逻辑。
+  window.__apply = apply;
+  // 暴露 state 给未读模块：「只看未读」要挂进同一条筛选链，否则两边各算一遍、计数会打架
+  window.__state = state;
+})();
+
+/* 配图放大预览：点缩略图弹出，同一条情报的全部配图可左右翻 */
+(function(){
+  var lb = document.getElementById('lb');
+  if (!lb) return;
+  var img  = document.getElementById('lb-img');
+  var cap  = document.getElementById('lb-cap');
+  var idx  = document.getElementById('lb-idx');
+  var ori  = document.getElementById('lb-ori');
+  var hint = document.getElementById('lb-hint');
+  var prev = lb.querySelector('.lb-prev');
+  var next = lb.querySelector('.lb-next');
+
+  var gallery = [];   // 预览图地址（本地相对路径优先，构建时已算好）
+  var caption = '';   // 「博主 · 标题」
+  var origin  = '';   // 原博链接
+  var pos = 0, opener = null;
+
+  function paint(){
+    if (!gallery.length) return;
+    var u = gallery[pos];
+    img.hidden = false;
+    if (hint) hint.style.display = 'none';
+    img.src = u;
+    img.alt = caption;
+
+    cap.textContent = '';
+    cap.appendChild(document.createTextNode(
+      caption + '　（' + (pos + 1) + '/' + gallery.length + '）'));
+    if (gallery.length > 1){
+      var k = document.createElement('span');
+      k.className = 'k';
+      k.textContent = '　← → 切换';
+      cap.appendChild(k);
+    }
+    if (origin){
+      var a = document.createElement('a');
+      a.href = origin;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.textContent = '　查看原博 ↗';
+      cap.appendChild(a);
+    }
+
+    idx.textContent = (pos + 1) + ' / ' + gallery.length;
+    var multi = gallery.length > 1;
+    prev.disabled = !multi;
+    next.disabled = !multi;
+    ori.href = u;                     // 「查看原图」直达未压缩原图
+  }
+  function open(list, i, capText, href, el){
+    if (!list.length) return;
+    gallery = list;
+    caption = capText || '';
+    origin  = href || '';
+    pos = Math.min(Math.max(0, i), list.length - 1);
+    opener = el || null;
+    lb.classList.add('on');
+    document.body.classList.add('lb-lock');
+    paint();
+    (list.length > 1 ? next : lb.querySelector('.lb-close')).focus();
+  }
+  function close(){
+    lb.classList.remove('on');
+    document.body.classList.remove('lb-lock');
+    img.removeAttribute('src');
+    if (opener && opener.focus) opener.focus();
+  }
+  function step(d){
+    if (gallery.length < 2) return;
+    pos = (pos + d + gallery.length) % gallery.length;
+    paint();
+  }
+
+  // 点缩略图：从所属卡片的 data-gallery 取出完整图集（含未显示的 +N 张）
+  document.addEventListener('click', function(e){
+    var t = e.target.closest ? e.target.closest('.thumb') : null;
+    if (!t) return;
+    var card = t.closest('.card');
+    if (!card) return;
+    var box = card.querySelector('.thumbs');
+    if (!box) return;
+
+    var list = [];
+    try { list = JSON.parse(box.dataset.gallery || '[]'); } catch (err) { list = []; }
+    // 没有图集（发布模式：缩略图是 <a>，点开直接跳原微博）→ 不拦截，交给浏览器
+    if (!list.length) return;
+    e.preventDefault();
+    open(list, parseInt(t.dataset.i || '0', 10) || 0,
+         box.dataset.cap || '', box.dataset.href || '', t);
+  });
+
+  // 本地图片缺失时给出明确提示，而不是只留一块空白
+  img.addEventListener('error', function(){
+    img.hidden = true;
+    if (hint) hint.style.display = '';
+  });
+
+  lb.querySelector('.lb-close').addEventListener('click', close);
+  prev.addEventListener('click', function(e){ e.stopPropagation(); step(-1); });
+  next.addEventListener('click', function(e){ e.stopPropagation(); step(1); });
+  ori.addEventListener('click', function(e){ e.stopPropagation(); });
+  lb.addEventListener('click', function(e){
+    if (e.target === lb) close();   // 点背景关闭；点图片本身不关
+  });
+
+  // 键盘：capture 阶段拦截，避免与搜索框的 Esc 清空冲突
+  document.addEventListener('keydown', function(e){
+    if (!lb.classList.contains('on')) return;
+    if (e.key === 'Escape'){ e.stopPropagation(); close(); }
+    else if (e.key === 'ArrowLeft'){ e.stopPropagation(); step(-1); }
+    else if (e.key === 'ArrowRight'){ e.stopPropagation(); step(1); }
+  }, true);
+
+  // 触屏左右滑动
+  var x0 = null;
+  lb.addEventListener('touchstart', function(e){
+    x0 = e.changedTouches[0].clientX;
+  }, {passive:true});
+  lb.addEventListener('touchend', function(e){
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 45) step(dx < 0 ? 1 : -1);
+    x0 = null;
+  }, {passive:true});
+})();
+
+/* 未读 / 已读：本日新出现的条目，读到即自动标记已读
+ *
+ * 状态存在 localStorage —— 同一浏览器里不同日期的简报文件、不同进程共享（已实测），
+ * 所以「今天读过的」明天再看不会重新提示。
+ *
+ * ⚠️ 局限：file:// 直接打开 与 内置预览面板（127.0.0.1 随机端口）的 origin 不同，
+ * 状态不互通。换了打开方式/浏览器后，点「导出已读回执」把 read-log.json 放进
+ * data/ 目录，构建时会烘焙进页面（window.__READ_BAKED）续上。
+ */
+(function(){
+  var bar = document.getElementById('unreadbar');
+  if (!bar) return;                    // 总览页没有这个组件，自动跳过
+  var LS_KEY  = 'wfir:read:v1';
+  var DWELL   = 2000;                  // 卡片在视口里稳定停留多久算「读过」(ms)
+  var MAXKEEP = 3000;                  // 本地最多保留多少条已读键
+  var PROBE   = /[?&]probe=1/.test(location.search);
+
+  var cards   = [].slice.call(document.querySelectorAll('.card[data-first="1"]'));
+  if (!cards.length) return;
+  var box     = document.getElementById('un-read');
+  var totalEl = document.getElementById('un-total');
+  var pill    = document.getElementById('un-pill');
+  var hint    = document.getElementById('un-hint');
+  var probe   = document.getElementById('probe');
+  var toggle  = document.getElementById('un-toggle');
+  var allBtn  = document.getElementById('un-all');
+  var expBtn  = document.getElementById('un-export');
+  var ustate  = {onlyUnread:false};
+
+  function load(){
+    var m = {};
+    try { m = JSON.parse(localStorage.getItem(LS_KEY) || '{}') || {}; }
+    catch (e) { m = {}; }
+    var baked = window.__READ_BAKED;
+    if (baked && baked.keys){
+      for (var k in baked.keys){ if (!(k in m)) m[k] = baked.keys[k]; }
+    }
+    return m;
+  }
+  var read = load();
+  var byKey = {};
+
+  function save(){
+    try {
+      var ks = Object.keys(read);
+      if (ks.length > MAXKEEP){
+        ks.sort(function(a, b){ return (read[a] || 0) - (read[b] || 0); });
+        ks.slice(0, ks.length - MAXKEEP).forEach(function(k){ delete read[k]; });
+      }
+      localStorage.setItem(LS_KEY, JSON.stringify(read));
+    } catch (e) {}
+  }
+  function paintCard(c, on){
+    if (!c) return;
+    c.classList.toggle('read', !!on);
+    var b = c.querySelector('.nbadge');
+    if (b){
+      b.classList.toggle('read', !!on);
+      b.textContent = on ? '✓ 已读' : '🆕 未读';
+    }
+  }
+  function counts(){
+    var n = 0, seen = 0, mark = {};
+    for (var i = 0; i < cards.length; i++){
+      var k = cards[i].dataset.ukey;
+      if (k && mark[k]) continue;     // 同一张卡在页面上有两份 DOM，只数一次
+      if (k) mark[k] = 1;
+      seen++;
+      if (!(k && read[k])) n++;
+    }
+    return {unread:n, total:seen};
+  }
+  function paint(){
+    var c = counts();
+    if (box) box.textContent = c.unread;
+    if (pill) pill.textContent = c.unread;
+    if (totalEl) totalEl.textContent = c.total;
+    bar.classList.toggle('done', c.unread === 0);
+    if (hint){
+      hint.textContent = c.unread
+        ? ('共 ' + c.total + ' 件本日新出现，读到即自动标记已读'
+           + (ustate.onlyUnread ? '（当前只看未读，已暂停自动标记）' : ''))
+        : ('✅ ' + c.total + ' 件本日新出现的情报已全部读完');
+    }
+    if (PROBE && probe){
+      probe.textContent = 'R::未读=' + c.unread + '/首现=' + c.total
+        + ' 已读键=' + Object.keys(read).length
+        + ' hidden=' + document.hidden;
+    }
+  }
+  function mark(k){
+    if (!k || read[k]) return;
+    read[k] = Math.round(Date.now() / 1000);
+    (byKey[k] || []).forEach(function(c){ paintCard(c, true); });
+    save(); paint();
+  }
+  function syncFilter(){
+    if (window.__state) window.__state.unread = ustate.onlyUnread;
+    if (window.__apply) window.__apply();
+  }
+
+  cards.forEach(function(c){
+    var k = c.dataset.ukey;
+    if (!k) return;
+    (byKey[k] = byKey[k] || []).push(c);
+    if (read[k]) paintCard(c, true);
+  });
+  // 以「去重后的键」为扫描单位。同一张卡在页面上有两份 DOM（新品清单一份、
+  // 全部情报一份），隐藏的那份 getBoundingClientRect 全为 0；若按元素逐个判可见性，
+  // 隐藏副本会把可见副本刚设好的计时器清零，停留时间永远累计不起来。
+  var keys = Object.keys(byKey);
+
+  // 读到即算读过：每 1 秒用几何位置扫一遍，卡片在视口里稳定停留 DWELL 毫秒后
+  // 自动标记已读。不用 IntersectionObserver 有两个实测原因：
+  //   ① 无头浏览器（自检环境）从不派发 IO 回调，功能无法回归验证；
+  //   ② 本地 file:// 在部分环境下滚动事件/合成帧不完整，IO 依赖它们。
+  // 几何判定只依赖布局，最不挑环境，延迟最多 1 秒。
+  var since = {};      // ukey -> 首次进入视口的时刻
+  function sweep(){
+    if (ustate.onlyUnread || document.hidden) return;
+    var now = Date.now(), vh = window.innerHeight;
+    for (var i = 0; i < keys.length; i++){
+      var k = keys[i];
+      if (read[k]) continue;
+      // 只要任一 DOM 副本确实可见（高度非 0 且落在视口安全区内）就算「在看着」
+      var vis = false, arr = byKey[k];
+      for (var j = 0; j < arr.length; j++){
+        var r = arr[j].getBoundingClientRect();
+        if (r.height > 0 && r.top < vh - 160 && r.bottom > 120){ vis = true; break; }
+      }
+      if (!vis){ since[k] = 0; continue; }
+      if (!since[k]) since[k] = now;
+      else if (now - since[k] >= DWELL) mark(k);
+    }
+  }
+  setInterval(sweep, 1000);
+  setTimeout(sweep, 400);
+
+  // 点标题 / 点「打开原博」= 明确要读，立刻标记，不必等停留
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('.card h3 a, a.src') : null;
+    if (!a) return;
+    var c = a.closest('.card');
+    if (c) mark(c.dataset.ukey);
+  });
+
+  if (toggle) toggle.addEventListener('click', function(){
+    ustate.onlyUnread = !ustate.onlyUnread;
+    toggle.classList.toggle('on', ustate.onlyUnread);
+    toggle.textContent = ustate.onlyUnread ? '显示全部' : '只看未读';
+    syncFilter(); paint();
+  });
+  if (allBtn) allBtn.addEventListener('click', function(){
+    cards.forEach(function(c){
+      var k = c.dataset.ukey;
+      if (k) read[k] = Math.round(Date.now() / 1000);
+    });
+    save();
+    cards.forEach(function(c){ paintCard(c, true); });
+    paint(); syncFilter();
+  });
+  if (expBtn) expBtn.addEventListener('click', function(){
+    var blob = new Blob([JSON.stringify({
+      version: 1, exported_at: new Date().toISOString(), keys: read
+    }, null, 2)], {type:'application/json'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'read-log.json';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  });
+
+  paint();
+  syncFilter();
+})();
+
+/* 日期时间线：读完一天直接翻到相邻一天（下拉任选 / 键盘 [ ]） */
+(function(){
+  var nav = document.getElementById('daynav');
+  if (!nav) return;
+  var prev = nav.getAttribute('data-prev') || '';
+  var next = nav.getAttribute('data-next') || '';
+  var sel  = document.getElementById('dn-sel');
+  if (sel) sel.addEventListener('change', function(){
+    if (sel.value) location.href = sel.value;
+  });
+  document.addEventListener('keydown', function(e){
+    // 放大预览开着时把键盘让给它（它用 ←/→ 翻图）
+    if (document.body.classList.contains('lb-lock')) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var a = document.activeElement, tag = a ? a.tagName : '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    if (e.key === '['){ if (!prev) return; e.preventDefault(); location.href = prev; }
+    if (e.key === ']'){ if (!next) return; e.preventDefault(); location.href = next; }
+  });
+})();
+
+/* 滚动方向感应：下滚把顶栏收起来（读正文时零遮挡），上滚 / 回到顶部立刻回来。
+   与总览页同一套手感。顶栏内有焦点时（正在搜索 / 选日期）不收起，
+   否则主人正打字顶栏却滑走了。 */
+(function(){
+  var top = document.querySelector('header.top');
+  if (!top) return;
+  var lastY = window.pageYOffset || 0, ticking = false;
+  function inTop(){
+    var a = document.activeElement;
+    return !!(a && top.contains(a));
+  }
+  window.addEventListener('scroll', function(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      var y = window.pageYOffset || 0, dy = y - lastY;
+      if (!inTop()){
+        if (dy > 4 && y > 160) top.classList.add('hide');
+        else if (dy < -4 || y <= 160) top.classList.remove('hide');
+      }
+      lastY = y;
+      ticking = false;
+    });
+  }, {passive:true});
+})();
+</script>
+</body>
+</html>
