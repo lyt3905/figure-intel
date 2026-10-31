@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>手办情报 · 2026-10-31</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#fff; --line:#e4e7ec; --ink:#16181d; --ink2:#5a6472;
+  --ink3:#8b95a3; --accent:#2f6fed; --accent-soft:#eaf1fe;
+  --high:#c5221f; --high-bg:#fdeceb; --mid:#1558c0; --mid-bg:#e8f0fe;
+  --low:#5f6b7a; --low-bg:#eef0f3;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",
+       "PingFang SC","Hiragino Sans GB",sans-serif;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+/* 顶栏 */
+/* 顶栏：下滚收起（正文零遮挡）、上滚立刻回来 —— 与总览页同一套手势 */
+.top{background:var(--card);border-bottom:1px solid var(--line);
+     position:sticky;top:0;z-index:9;transition:transform .22s ease}
+.top.hide{transform:translateY(-100%)}
+.top .inner{padding:12px 0 10px}
+h1{margin:0 0 6px;font-size:22px;letter-spacing:.2px}
+/* 行 1：标题 + 来源说明 + 未读胶囊 + 核心数字，压成一行 */
+.toprow{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px 12px}
+.toprow h1{margin:0;font-size:19px;letter-spacing:.2px;white-space:nowrap}
+.toprow h1 .h1d{font-size:13.5px;color:var(--ink3);font-weight:400}
+.sp{flex:1 1 auto}
+.sub{color:var(--ink3);font-size:12.5px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;max-width:38vw}
+.stat{display:flex;flex-wrap:wrap;align-items:center;gap:5px 10px;
+  margin:0;font-size:12.5px;color:var(--ink3)}
+.stat span{color:var(--ink2)}
+.stat span b{color:var(--ink2);font-weight:600}
+.stat .un-pill{background:#eaf1fe;border:1px solid #c9d8f5;color:#2f6fed;
+  border-radius:999px;padding:3px 11px}
+.stat .un-pill b{color:#2f6fed}
+/* 行 2：时间线 + 搜索 + 视图切换，同一排；窄屏自动换行 */
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+  margin-top:9px;padding-top:9px;border-top:1px dashed var(--line)}
+
+/* 日期时间线：读完一天直接翻到前一天 / 后一天（翻页按钮 + 下拉任选日期，同一排） */
+.daynav{display:flex;flex-wrap:wrap;align-items:center;gap:7px;
+  flex:0 1 auto;min-width:0}
+.dn-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink2);border-radius:8px;padding:4px 10px;
+  font-size:12.5px;white-space:nowrap;cursor:pointer;transition:.12s}
+.dn-btn:hover{border-color:var(--accent);color:var(--accent);
+  background:var(--accent-soft);text-decoration:none}
+.dn-btn .dn-ar{font-size:14px;line-height:1;opacity:.75}
+.dn-btn .dn-w{color:var(--ink3);font-size:11.5px}
+.dn-btn.off{opacity:.45;cursor:not-allowed;background:var(--bg)}
+.dn-btn.off:hover{border-color:var(--line);color:var(--ink2);background:var(--bg)}
+.dn-sel{border:1px solid var(--line);background:var(--bg);color:var(--ink);
+  border-radius:8px;padding:4px 8px;font-size:12.5px;font-family:inherit;
+  cursor:pointer;max-width:200px}
+.dn-sel:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.dn-pos{font-size:12px;color:var(--ink3);white-space:nowrap}
+.dn-idx{font-size:12.5px;white-space:nowrap}
+.dn-hint{font-size:11.5px;color:var(--ink3);white-space:nowrap;opacity:.85}
+/* 页脚翻页条：长页面读完在底部，就地翻到相邻一期 */
+.dayfoot{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  gap:9px;margin:14px 0 0;padding:18px 0 6px;border-top:1px solid var(--line)}
+.dayfoot .df-t{font-size:12.5px;color:var(--ink3)}
+.dayfoot .dn-btn{padding:7px 15px;font-size:13px}
+.dn-btn.dn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.dn-btn.dn-primary:hover{background:#2560d8;border-color:#2560d8;color:#fff}
+
+/* 控件 */
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  flex:1 1 300px;margin-top:0;padding-bottom:0}
+#q{flex:1 1 180px;min-width:150px;padding:7px 12px;border:1px solid var(--line);
+  border-radius:8px;font-size:13.5px;font-family:inherit;background:var(--bg)}
+#q:focus{outline:2px solid var(--accent-soft);border-color:var(--accent);
+  background:var(--card)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink2);
+  border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;
+  font-family:inherit;transition:.12s}
+.chip:hover{border-color:#c9d2de;color:var(--ink)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.count{color:var(--ink3);font-size:12.5px;margin-left:auto;white-space:nowrap}
+/* 分类 / 相关度筛选条：只在「全部情报」视图出现，不占默认视图的高度 */
+.filterbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  margin-top:9px;padding-top:9px;border-top:1px dashed var(--line)}
+.view-new .filterbar{display:none}
+
+/* 视图切换：新品清单 / 全部情报 */
+.view-new .group-all{display:none}
+.views{display:flex;gap:4px;margin-top:0;background:var(--bg);
+  border:1px solid var(--line);border-radius:11px;padding:4px;width:fit-content}
+.view{border:0;background:transparent;color:var(--ink2);font-family:inherit;
+  font-size:13.5px;font-weight:600;padding:7px 16px;border-radius:8px;
+  cursor:pointer;transition:.15s;white-space:nowrap}
+.view:hover{color:var(--ink)}
+.view.on{background:var(--card);color:var(--accent);
+  box-shadow:0 1px 4px rgba(20,30,50,.1)}
+.view b{font-weight:700}
+.view .vh{font-weight:400;opacity:.62;font-size:12px;margin-left:3px}
+
+/* 新品清单：同一款产品的多条报道 */
+.reports{margin:0;font-size:12.5px;color:var(--ink2);background:var(--bg);
+  border:1px dashed var(--line);border-radius:8px;padding:7px 10px;
+  display:flex;flex-wrap:wrap;gap:6px 12px}
+.reports span{display:inline-flex;align-items:center;gap:4px}
+.reports .k{color:var(--ink3);font-size:12px}
+.kinds{display:inline-flex;gap:4px}
+.kinds em{font-style:normal;font-size:11.5px;color:var(--ink3);
+  background:var(--bg);border:1px solid var(--line);border-radius:5px;
+  padding:1px 6px}
+
+/* 纯新品清单：脱离情报分类的单列编号列表 */
+.newlist{display:flex;flex-direction:column;gap:11px}
+.newlist .card{position:relative;padding-left:52px}
+.newlist .idx{position:absolute;left:15px;top:15px;width:24px;height:24px;
+  border-radius:50%;background:var(--accent-soft);color:var(--accent);
+  font-size:12.5px;font-weight:700;display:flex;align-items:center;
+  justify-content:center;line-height:1}
+.rank{display:inline-flex;align-items:center;gap:5px;font-size:12px;
+  font-weight:600;border-radius:6px;padding:2px 9px;letter-spacing:.2px}
+.rank-1{background:#e3f5ea;color:#1a7a45}
+.rank-2{background:#fdf3dc;color:#8a6412}
+.rank-3{background:#ede7fd;color:#5b3ec8}
+.rank-4{background:#eef0f3;color:#5f6b7a}
+.newhead{display:flex;align-items:baseline;gap:10px;margin:0 0 13px;
+  padding-bottom:9px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.newhead h2{margin:0;font-size:15px;font-weight:650;letter-spacing:.2px}
+.newhead .nh{color:var(--ink3);font-size:12.5px;font-weight:400}
+.newhead .gbar{margin-left:auto;height:3px;width:38px;border-radius:2px;
+  background:#e9edf3}
+
+/* 卡片 */
+main{padding:20px 0 60px}
+.group{margin-bottom:26px}
+.group h2{display:flex;align-items:center;gap:9px;margin:0 0 13px;
+  padding-bottom:9px;border-bottom:1px solid var(--line);font-size:15px;
+  font-weight:650;letter-spacing:.2px}
+.group h2 .gn{color:var(--ink3);font-size:12.5px;font-weight:400}
+.group h2 .gbar{margin-left:auto;height:3px;width:38px;border-radius:2px;
+  background:#e9edf3}
+.group.off{display:none}
+.grid{display:grid;grid-template-columns:1fr;gap:11px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:14px 17px 15px;display:flex;flex-direction:column;gap:9px}
+.card:hover{border-color:#cfd8e5;box-shadow:0 2px 10px rgba(20,30,50,.06)}
+.body{display:grid;grid-template-columns:minmax(0,1fr) 258px;gap:20px;
+  align-items:start}
+.main{display:flex;flex-direction:column;gap:8px;min-width:0}
+.side{display:flex;flex-direction:column;gap:10px;align-items:stretch;
+  border-left:1px solid var(--line);padding-left:17px;min-width:0}
+.side .src{align-self:flex-start}
+.side .tags{align-self:flex-start}
+.head{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.badge{font-size:11.5px;padding:2px 9px;border-radius:6px;font-weight:600;
+  letter-spacing:.2px}
+.t-new{background:#ede7fd;color:#5b3ec8}
+.t-open{background:#e3f5ea;color:#1a7a45}
+.t-sale{background:#fdeee2;color:#a8541a}
+.t-reprint{background:#e6f1f7;color:#1a6285}
+.t-delay{background:#fdeceb;color:#b3261e}
+.t-event{background:#fdf3dc;color:#8a6412}
+.t-review{background:#eaeaf0;color:#4d5364}
+.t-promo{background:#fce8f3;color:#a1336e}
+.t-other{background:#eef0f3;color:#5f6b7a}
+.rel{font-size:11.5px;padding:2px 8px;border-radius:6px;font-weight:600}
+.r-high{background:var(--high-bg);color:var(--high)}
+.r-mid{background:var(--mid-bg);color:var(--mid)}
+.r-low{background:var(--low-bg);color:var(--low)}
+.time{margin-left:auto;color:var(--ink3);font-size:12px;white-space:nowrap}
+.card h3{margin:0;font-size:15.5px;line-height:1.45;font-weight:650}
+.card h3 .brand{color:var(--ink)}
+.card h3 .line{color:var(--ink2);font-weight:500;font-size:13.5px}
+/* 标题本身即链接：点标题也能跳原博 */
+.card h3 a{color:inherit;text-decoration:none;cursor:pointer}
+.card h3 a:hover{color:var(--accent);text-decoration:underline;
+  text-underline-offset:3px}
+.card h3 a:focus-visible{outline:2px solid var(--accent-soft);
+  border-radius:3px}
+.sum{margin:0;color:var(--ink2);font-size:13.5px}
+.facts{display:flex;flex-wrap:wrap;gap:6px;margin:1px 0 0}
+.facts i{font-style:normal;background:var(--bg);border:1px solid var(--line);
+  border-radius:6px;padding:2px 8px;font-size:12.5px;color:var(--ink2)}
+.facts i b{color:var(--ink);font-weight:600;margin-right:3px}
+.why{background:#fbfaf4;border-left:3px solid #e0c98a;border-radius:4px;
+  padding:7px 10px;font-size:12.5px;color:#6b5a24}
+.src{display:inline-flex;align-items:center;gap:5px;font-size:13px;
+  font-weight:600;background:var(--accent-soft);border-radius:8px;
+  padding:6px 12px}
+.src:hover{background:#dce8fd;text-decoration:none}
+.tags{display:flex;gap:5px;flex-wrap:wrap}
+.tags em{font-style:normal;font-size:11.5px;color:var(--ink3)}
+
+/* 缩略图（右栏顶部，方案 A）：点击放大预览 */
+.thumbs{display:flex;flex-wrap:wrap;gap:6px;align-self:flex-start}
+.thumb{position:relative;width:74px;height:74px;padding:0;flex:0 0 auto;
+  border:1px solid var(--line);border-radius:9px;overflow:hidden;
+  background:var(--bg);cursor:zoom-in;display:block;font:inherit;
+  transition:border-color .15s,box-shadow .15s}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .28s ease}
+.thumb:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(20,30,50,.12)}
+.thumb:hover img{transform:scale(1.07)}
+.thumb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.thumb .more{position:absolute;right:3px;bottom:3px;background:rgba(12,15,20,.74);
+  color:#fff;font-size:11px;font-weight:600;line-height:1.45;
+  padding:0 6px;border-radius:999px;pointer-events:none}
+.thumb.tre{box-shadow:inset 0 0 0 2px #f0d9a0}
+.thumb.tre::after{content:"转";position:absolute;left:3px;top:3px;
+  background:rgba(180,140,30,.88);color:#fff;font-size:10px;
+  padding:0 5px;border-radius:5px;line-height:1.5}
+
+/* 放大预览（lightbox） */
+.lb{position:fixed;inset:0;z-index:100;display:none;
+  background:rgba(10,13,18,.93);-webkit-backdrop-filter:blur(4px);
+  backdrop-filter:blur(4px);flex-direction:column;align-items:center;
+  justify-content:center;padding:56px 76px 64px}
+.lb.on{display:flex}
+.lb img{max-width:100%;max-height:calc(100vh - 172px);object-fit:contain;
+  border-radius:6px;background:#101318;box-shadow:0 12px 44px rgba(0,0,0,.5)}
+.lb .cap{color:#e9edf4;font-size:13.5px;margin-top:14px;text-align:center;
+  max-width:min(90vw,900px);line-height:1.6}
+.lb .cap a{color:#9dc0ff}
+.lb .cap .k{color:#98a2b3;font-size:12.5px}
+.lb-btn{border:0;cursor:pointer;font-family:inherit;color:#fff;
+  background:rgba(255,255,255,.12);border-radius:10px;transition:.15s}
+.lb-btn:hover{background:rgba(255,255,255,.26)}
+.lb-btn:disabled{opacity:.22;cursor:default}
+.lb-close{position:absolute;top:18px;right:22px;width:40px;height:40px;
+  font-size:22px;line-height:1;border-radius:50%}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:70px;
+  font-size:24px;line-height:1}
+.lb-prev{left:18px}.lb-next{right:18px}
+.lb-hint{color:#ffd9a8;font-size:13.5px;text-align:center;line-height:1.75;
+  max-width:560px;padding:26px 18px;background:rgba(255,255,255,.06);
+  border-radius:10px}
+.lb-hint code{background:rgba(255,255,255,.14);padding:1px 6px;border-radius:4px;
+  font-size:12.5px}
+.lb-idx{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
+  color:#aab3c2;font-size:12.5px;letter-spacing:.4px}
+.lb-ori{position:absolute;bottom:18px;right:22px;color:#9dc0ff;font-size:12.5px}
+body.lb-lock{overflow:hidden}
+
+@media(max-width:860px){
+  .lb{padding:52px 12px 60px}
+  .lb-nav{width:38px;height:56px;font-size:20px}
+  .lb-prev{left:6px}.lb-next{right:6px}
+  .lb .cap{font-size:12.5px}
+}
+.empty{text-align:center;color:var(--ink3);padding:60px 0;font-size:14px}
+.legend{margin:18px 0 10px;color:var(--ink3);font-size:12.5px}
+@media(max-width:860px){
+  .body{grid-template-columns:1fr;gap:0}
+  .side{border-left:0;border-top:1px solid var(--line);padding-left:0;
+    padding-top:11px;margin-top:11px;flex-direction:row;flex-wrap:wrap;
+    align-items:center;gap:9px;width:100%}
+  .side .facts{flex:1 1 100%}
+  .side .thumbs{flex:1 1 100%}
+  .toprow .sp{display:none}
+  .stat{flex:1 1 100%}
+  .toolbar{gap:8px}
+  .controls{flex:1 1 100%}
+  .views{width:100%}
+  .view{flex:1;text-align:center}
+}
+@media(max-width:640px){
+  h1{font-size:19px}
+  .count{margin-left:0;width:100%}
+  .card{padding:13px 14px 14px}
+  .toprow h1{font-size:17px}
+  .sub{max-width:100%}
+  .dn-sel{max-width:130px}
+}
+/* 未读 / 已读：本日新出现的条目读到即自动标记已读 */
+.unreadbar{display:flex;flex-wrap:wrap;align-items:center;gap:9px;
+  margin:0 0 16px;padding:10px 13px;border-radius:11px;
+  border:1px solid #cfdffb;background:linear-gradient(180deg,#f4f8ff,#edf3ff)}
+.unreadbar.done{border-color:#cfe9d8;background:linear-gradient(180deg,#f3fbf6,#ecf8f1)}
+.unreadbar .ub-t{font-size:13.5px;color:var(--ink2)}
+.unreadbar .ub-t b{font-size:15.5px;color:var(--accent);font-weight:700}
+.unreadbar.done .ub-t b{color:#1a7a45}
+.unreadbar .sp{flex:1 1 auto}
+.unreadbar .ub-hint{flex:1 1 100%;font-size:12px;color:var(--ink3);
+  margin-top:-1px;line-height:1.5}
+.ubtn{border:1px solid #c3d6f8;background:#fff;color:var(--accent);
+  border-radius:8px;padding:5px 12px;font-size:12.5px;font-family:inherit;
+  font-weight:600;cursor:pointer;transition:.12s;white-space:nowrap}
+.ubtn:hover{border-color:var(--accent);background:var(--accent-soft)}
+.ubtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.ubtn.ghost{color:var(--ink2);border-color:var(--line);font-weight:400}
+.ubtn.ghost:hover{color:var(--ink);border-color:#c9d2de;background:#fff}
+/* 未读徽章：出现在卡片头部行首，读到后由 JS 换成绿色「✓ 已读」 */
+.nbadge{font-size:11.5px;font-weight:700;letter-spacing:.2px;padding:2px 9px;
+  border-radius:6px;background:var(--accent);color:#fff}
+.nbadge.read{background:#e6f3ea;color:#1a7a45;font-weight:600}
+.card.read{box-shadow:inset 3px 0 0 0 #cfe9d8}
+.card.read:hover{box-shadow:inset 3px 0 0 0 #cfe9d8,0 2px 10px rgba(20,30,50,.06)}
+#probe{display:none}
+@media(max-width:640px){
+  .unreadbar .ub-t{flex:1 1 100%}
+  .unreadbar .sp{display:none}
+  .ubtn{flex:1 1 auto;text-align:center}
+  /* 窄屏：星期与键盘提示先让位，保证上一期 / 下一期两个按钮不换行 */
+  .dn-btn .dn-w{display:none}
+  .dn-hint{display:none}
+  .dn-idx{margin-left:0}
+  .dn-pos{display:none}
+}
+/* 价格 / 时间标记：一眼看出哪些条目带可下单信息 */
+.flag{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;
+      padding:2px 8px;border-radius:999px;line-height:1.5;white-space:nowrap;
+      max-width:46vw;overflow:hidden;text-overflow:ellipsis}
+.f-price{background:#fff4e5;color:#a85700;border:1px solid #ffd8a8}
+.f-pre{background:#eaf6ee;color:#1a7f45;border:1px solid #b7e4c7}
+.f-date{background:#eef2ff;color:#3b4fbf;border:1px solid #c9d4ff}
+@media print{
+  .flag{border-color:#ccc}
+  .unreadbar{display:none}
+  .daynav{display:none}
+  .dayfoot{display:none}
+  .top{position:static;transform:none}
+  .controls{display:none}
+  body{background:#fff}.card{break-inside:avoid;box-shadow:none}
+}
+</style>
+</head>
+<body class="view-new"><div style="display:flex;align-items:center;gap:12px;padding:9px 18px;background:#1f2430;color:#fff;font:13px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif"><span style="font-weight:600">手办情报 · 每日更新</span><span style="opacity:.72">2026-10-31 周六</span><span style="opacity:.55">第 29 / 29 期</span><a href="archive.html" style="margin-left:auto;color:#9ecbff;text-decoration:none">历史归档 →</a></div>
+<header class="top">
+  <div class="wrap inner">
+    <div class="toprow">
+      <h1>手办情报　<span class="h1d">· 10-31 周六</span></h1>
+      <span class="sub" title="从 50 条粗筛候选中提取">从 50 条粗筛候选中提取</span>
+      <span class="sp"></span>
+      <div class="stat"><span class="un-pill">📬 未读 <b id="un-pill">13</b></span><span>共 <b>19</b> 条情报</span><span>新品 <b>13</b></span><span>高相关 <b>3</b></span><span data-only-view="all" hidden>新品公布 <b>6</b></span><span data-only-view="all" hidden>开订 <b>3</b></span><span data-only-view="all" hidden>发售 <b>4</b></span><span data-only-view="all" hidden>展会 <b>2</b></span><span data-only-view="all" hidden>实物测评 <b>4</b></span></div>
+    </div>
+    <div class="toolbar">
+      <nav class="daynav" id="daynav" aria-label="日期时间线" data-prev="2026-10-30.html" data-next=""><a class="dn-btn" href="2026-10-30.html" rel="prev" title="上一期 2026-10-30（周五）"><span class="dn-ar">‹</span><span class="dn-t">10-30</span><span class="dn-w">周五</span></a><select class="dn-sel" id="dn-sel" aria-label="跳转到指定日期" title="选择要看的日期"><option value="2026-09-30.html">09-30 周三</option><option value="2026-10-01.html">10-01 周四</option><option value="2026-10-02.html">10-02 周五</option><option value="2026-10-03.html">10-03 周六</option><option value="2026-10-05.html">10-05 周一</option><option value="2026-10-06.html">10-06 周二</option><option value="2026-10-07.html">10-07 周三</option><option value="2026-10-08.html">10-08 周四</option><option value="2026-10-09.html">10-09 周五</option><option value="2026-10-10.html">10-10 周六</option><option value="2026-10-11.html">10-11 周日</option><option value="2026-10-13.html">10-13 周二</option><option value="2026-10-14.html">10-14 周三</option><option value="2026-10-15.html">10-15 周四</option><option value="2026-10-16.html">10-16 周五</option><option value="2026-10-17.html">10-17 周六</option><option value="2026-10-18.html">10-18 周日</option><option value="2026-10-19.html">10-19 周一</option><option value="2026-10-20.html">10-20 周二</option><option value="2026-10-21.html">10-21 周三</option><option value="2026-10-22.html">10-22 周四</option><option value="2026-10-23.html">10-23 周五</option><option value="2026-10-24.html">10-24 周六</option><option value="2026-10-26.html">10-26 周一</option><option value="2026-10-27.html">10-27 周二</option><option value="2026-10-28.html">10-28 周三</option><option value="2026-10-29.html">10-29 周四</option><option value="2026-10-30.html">10-30 周五</option><option value="2026-10-31.html" selected>10-31 周六（今天）</option></select><span class="dn-btn off" title="已是最新一期"><span class="dn-t">最新</span><span class="dn-ar">›</span></span><span class="dn-pos">第 29 / 29 期</span><a class="dn-idx" href="archive.html">全部日期 →</a><span class="dn-hint">键盘 [ ] 翻日期</span></nav>
+      <div class="controls">
+        <input id="q" type="search" placeholder="搜索厂商 / 角色 / 产品线 / 摘要…（按 / 聚焦）">
+        <div class="views" id="views"><button class="view on" type="button" data-view="new"><b>🆕 新品清单</b><span class="vh">13 件</span></button><button class="view" type="button" data-view="all">全部情报<span class="vh">19 条</span></button></div>
+        <span class="count" id="count"></span>
+      </div>
+    </div>
+    <div class="filterbar" id="filterbar">
+      <div class="chips" id="typeChips"><button class="chip on" data-type-chip="全部">全部</button><button class="chip" data-type-chip="新品公布">新品公布 <span style="opacity:.6">6</span></button><button class="chip" data-type-chip="开订">开订 <span style="opacity:.6">3</span></button><button class="chip" data-type-chip="发售">发售 <span style="opacity:.6">4</span></button><button class="chip" data-type-chip="展会">展会 <span style="opacity:.6">2</span></button><button class="chip" data-type-chip="实物测评">实物测评 <span style="opacity:.6">4</span></button></div>
+      <div class="chips" id="relChips"><button class="chip on" data-rel-chip="全部">不限相关度</button><button class="chip" data-rel-chip="高">仅高相关 3</button></div>
+      <div class="chips" id="flagChips"><button class="chip on" data-flag-chip="全部">不限标记</button><button class="chip" data-flag-chip="价格">💰 有价格 3</button><button class="chip" data-flag-chip="发售">📅 有发售时间 4</button></div>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+  <div class="unreadbar" id="unreadbar"><span class="ub-t">📬 本日新出现 <b id="un-total">13</b> 件 · 未读 <b id="un-read">13</b> 条</span><span class="sp"></span><button class="ubtn" id="un-toggle" type="button">只看未读</button><button class="ubtn ghost" id="un-all" type="button">全部标为已读</button><button class="ubtn ghost" id="un-export" type="button" title="导出已读回执 JSON；放进 data/read-log.json 后，换浏览器或换打开方式也能接着算未读">导出已读回执</button><span class="ub-hint" id="un-hint"></span></div>
+  <div id="groups"><section class="group group-new" data-group="__new__"><div class="newhead"><h2>🆕 新品清单</h2><span class="nh">13 件新品</span><span class="gbar"></span></div><div class="newlist"><article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="布鲁可|初音未来" data-search="布鲁可 初音未来 初音未来 奇迹版 · 未来有你 2026 布鲁可积木人奇迹版「初音未来 · 未来有你 2026」即将上新，官方放出新品情报图。 布鲁可积木人      新品公布"><span class="idx">1</span><div class="head"><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 10:00</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7790031436/Rp1Zcw3Wg" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">布鲁可</span> · <span class="brand">初音未来 / 初音未来</span> · <span class="line">奇迹版 · 未来有你 2026</span></a></h3><p class="sum">布鲁可积木人奇迹版「初音未来 · 未来有你 2026」即将上新，官方放出新品情报图。</p><div class="why">相关理由：官方预告即将上市</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/7790031436/Rp1Zcw3Wg" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 4 张）" title="点开原微博看大图（共 4 张）"><img src="media/thumb/008vcb2kgy1iijc48fjczj31ab1pr1kz.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/7790031436/Rp1Zcw3Wg" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 4 张）" title="点开原微博看大图（共 4 张）"><img src="media/thumb/008vcb2kgy1iijc48940tj31ab1prqv6.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/7790031436/Rp1Zcw3Wg" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 4 张）" title="点开原微博看大图（共 4 张）"><img src="media/thumb/008vcb2kgy1iijc484drsj31ab1prnpe.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+1</span></a></div><a class="src" href="https://weibo.com/7790031436/Rp1Zcw3Wg" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@布鲁可积木人</span></a></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="takara tomy|星辰利剑 史达" data-search="takara tomy 变形金刚 星辰利剑 史达 钢铁机神 adamas machina t-spark 日版钢铁机神新品官图发布：amt-03 星辰利剑史达。 蓝色正午      新品公布"><span class="idx">2</span><div class="head"><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 12:23</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1459078762/Rp2Vlxk1B" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">Takara Tomy</span> · <span class="brand">星辰利剑 史达 / 变形金刚</span> · <span class="line">钢铁机神 Adamas Machina</span></a></h3><p class="sum">T-Spark 日版钢铁机神新品官图发布：AMT-03 星辰利剑史达。</p><div class="why">相关理由：官图公布，价格与发售日待定</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1459078762/Rp2Vlxk1B" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 4 张）" title="点开原微博看大图（共 4 张）"><img src="media/thumb/56f7c66aly1iik9i4hg46j227i1lvnpd.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1459078762/Rp2Vlxk1B" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 4 张）" title="点开原微博看大图（共 4 张）"><img src="media/thumb/56f7c66aly1iik9i5honyj2334334kjl.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1459078762/Rp2Vlxk1B" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 4 张）" title="点开原微博看大图（共 4 张）"><img src="media/thumb/56f7c66aly1iik9i6ha4cj2334334npd.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+1</span></a></div><a class="src" href="https://weibo.com/1459078762/Rp2Vlxk1B" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@蓝色正午</span></a></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="hasbro|横炮（扫描版）" data-first="1" data-search="hasbro 变形金刚 横炮（扫描版） hp 系列 变形金刚电影 hp 横炮扫描版玩具开箱，被称为「性价比之王」的重涂版本。 少主狸卖萌时间      实物测评"><span class="idx">3</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="badge t-review" style="opacity:.62">实物测评</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 20:26</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/2809645763/Rp65l0kcI" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">Hasbro</span> · <span class="brand">横炮（扫描版） / 变形金刚</span> · <span class="line">HP 系列</span></a></h3><p class="sum">变形金刚电影 HP 横炮扫描版玩具开箱，被称为「性价比之王」的重涂版本。</p><div class="why">相关理由：开箱视频，非官方情报</div><div class="reports"><span class="k">另有 1 条报道：</span><span><a href="https://weibo.com/1088900641/Rp5efuWfk" target="_blank" rel="noopener noreferrer">@塞伯坦守望者 ↗</a><span class="k">2026-10-30 18:15</span></span></div></div><div class="side"><a class="src" href="https://weibo.com/2809645763/Rp65l0kcI" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@少主狸卖萌时间</span></a></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="孩之宝|混沌使徒 擎天柱" data-search="孩之宝 变形金刚 混沌使徒 擎天柱 变形金刚：新纪元 收藏品 《变形金刚：新纪元》混沌使徒擎天柱收藏品限量新品公布 pv 宣传片。 蓝色正午      新品公布"><span class="idx">4</span><div class="head"><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 23:53</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1459078762/Rp7rHxH8x" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">孩之宝</span> · <span class="brand">混沌使徒 擎天柱 / 变形金刚</span> · <span class="line">变形金刚：新纪元 收藏品</span></a></h3><p class="sum">《变形金刚：新纪元》混沌使徒擎天柱收藏品限量新品公布 PV 宣传片。</p><div class="why">相关理由：限量收藏品预告</div></div><div class="side"><a class="src" href="https://weibo.com/1459078762/Rp7rHxH8x" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@蓝色正午</span></a></div></div></article>
+<article class="card" data-type="新品公布" data-rel="低" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="takara tomy|日版" data-first="1" data-search="takara tomy 变形金刚  日版 takara tomy 日版变形金刚新品黑影图更新（型号未明）。 小白哥乌拉诺斯      新品公布"><span class="idx">5</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="rel r-low">低相关</span><span class="time">2026-10-30 21:31</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1918541453/Rp6vM9fAS" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">Takara Tomy</span> · <span class="brand">变形金刚</span> · <span class="line">日版</span></a></h3><p class="sum">Takara Tomy 日版变形金刚新品黑影图更新（型号未明）。</p><div class="why">相关理由：仅黑影预告，无型号细节</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1918541453/Rp6vM9fAS" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 5 张）" title="点开原微博看大图（共 5 张）"><img src="media/thumb/725a9e8dgy1iikpchlwuhj21400midla.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6vM9fAS" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 5 张）" title="点开原微博看大图（共 5 张）"><img src="media/thumb/725a9e8dgy1iikpchxy09j21400mjtbz.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6vM9fAS" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 5 张）" title="点开原微博看大图（共 5 张）"><img src="media/thumb/725a9e8dgy1iikpcievw3j21400miwjk.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+2</span></a></div><a class="src" href="https://weibo.com/1918541453/Rp6vM9fAS" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@小白哥乌拉诺斯</span></a></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="铁工厂 ironfactory|禍魔鼬 kamaitachi" data-first="1" data-search="铁工厂 ironfactory 变形金刚（原创） 禍魔鼬 kamaitachi iron samurai series if ex-81 铁工厂 iron samurai series if ex-81「陸上無双 禍魔鼬 kamaitachi」公布：夸张飞机头与宽大裤腿设计，配折叠刀，可变形成改装方程式赛车，可选装竹枪式排气管与火焰车贴，附赠暴走韦驮天合体腰部配件（if80 车厢中部）。 铁工厂ironfactory      新品公布"><span class="idx">6</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 18:35</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/3468043824/Rp5moCooz" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">铁工厂 IronFactory</span> · <span class="brand">禍魔鼬 KAMAITACHI / 变形金刚（原创）</span> · <span class="line">Iron Samurai Series IF EX-81</span></a></h3><p class="sum">铁工厂 Iron Samurai Series IF EX-81「陸上無双 禍魔鼬 KAMAITACHI」公布：夸张飞机头与宽大裤腿设计，配折叠刀，可变形成改装方程式赛车，可选装竹枪式排气管与火焰车贴，附赠暴走韦驮天合体腰部配件（IF80 车厢中部）。</p><div class="why">相关理由：第三方新品公布，价格待定</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/3468043824/Rp5moCooz" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 12 张）" title="点开原微博看大图（共 12 张）"><img src="media/thumb/ceb62630gy1iikk64uzd1j21591j01kx.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/3468043824/Rp5moCooz" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 12 张）" title="点开原微博看大图（共 12 张）"><img src="media/thumb/ceb62630gy1iikk64hi91j21591j0ay6.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/3468043824/Rp5moCooz" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 12 张）" title="点开原微博看大图（共 12 张）"><img src="media/thumb/ceb62630gy1iikk649nfcj21591j0h8h.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+9</span></a></div><a class="src" href="https://weibo.com/3468043824/Rp5moCooz" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@铁工厂IronFactory</span></a></div></div></article>
+<article class="card" data-type="开订" data-rel="高" data-isnew="1" data-price="1" data-pre="0" data-date="1" data-when="1" data-ukey="bandai|费蒙特 femto（暗黑之鹰）" data-first="1" data-search="bandai 烙印勇士 费蒙特 femto（暗黑之鹰） s.h.figuarts 万代 s.h.figuarts《剑风传奇 烙印勇士》暗黑之鹰 费蒙特（femto）公布，2027 年 7 月发售，定价 14,300 日元。 小白哥乌拉诺斯 14,300 日元  2027年7月   开订"><span class="idx">7</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-open">开订</span><span class="flag f-price" title="本条带价格">💰 14,300 日元</span><span class="flag f-date" title="本条带发售时间">📅 发售 2027年7月</span><span class="rel r-high">高相关</span><span class="time">2026-10-30 21:38</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1918541453/Rp6yHuA92" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">BANDAI</span> · <span class="brand">费蒙特 FEMTO（暗黑之鹰） / 烙印勇士</span> · <span class="line">S.H.Figuarts</span></a></h3><p class="sum">万代 S.H.Figuarts《剑风传奇 烙印勇士》暗黑之鹰 费蒙特（FEMTO）公布，2027 年 7 月发售，定价 14,300 日元。</p><div class="why">相关理由：官方价格与发售月齐全</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1918541453/Rp6yHuA92" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/725a9e8dgy1iikpj9bt8cj20u011ijux.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6yHuA92" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/725a9e8dgy1iikpj9qwbcj21kw0w0ajc.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6yHuA92" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/725a9e8dgy1iikpl6077tj20u011iadc.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+6</span></a></div><div class="facts"><i><b>参考价</b>14,300 日元</i><i><b>发售</b>2027年7月</i></div><a class="src" href="https://weibo.com/1918541453/Rp6yHuA92" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@小白哥乌拉诺斯</span></a></div></div></article>
+<article class="card" data-type="开订" data-rel="高" data-isnew="1" data-price="1" data-pre="0" data-date="1" data-when="1" data-ukey="takara tomy|丹帝拜恩 dandivine" data-first="1" data-search="takara tomy 兽王武神 丹帝拜恩 dandivine toyrise takara tomy toyrise 系列「兽王武神 dandivine 丹帝拜恩」2027 年 6 月发售，定价 33,000 日元。 小白哥乌拉诺斯 33,000 日元  2027年6月   开订"><span class="idx">8</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-open">开订</span><span class="flag f-price" title="本条带价格">💰 33,000 日元</span><span class="flag f-date" title="本条带发售时间">📅 发售 2027年6月</span><span class="rel r-high">高相关</span><span class="time">2026-10-30 21:33</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1918541453/Rp6wCnVNS" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">Takara Tomy</span> · <span class="brand">丹帝拜恩 DANDIVINE / 兽王武神</span> · <span class="line">TOYRISE</span></a></h3><p class="sum">TAKARA TOMY TOYRISE 系列「兽王武神 DANDIVINE 丹帝拜恩」2027 年 6 月发售，定价 33,000 日元。</p><div class="why">相关理由：官方价格与发售月齐全</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1918541453/Rp6wCnVNS" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/725a9e8dgy1iikpej9s4bj20xc0ukn4s.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6wCnVNS" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/725a9e8dgy1iikpejwvejj20uk0ukwhz.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6wCnVNS" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/725a9e8dgy1iikpekiielj20uk0ukwjc.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+6</span></a></div><div class="facts"><i><b>参考价</b>33,000 日元</i><i><b>发售</b>2027年6月</i></div><a class="src" href="https://weibo.com/1918541453/Rp6wCnVNS" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@小白哥乌拉诺斯</span></a></div></div></article>
+<article class="card" data-type="开订" data-rel="高" data-isnew="1" data-price="1" data-pre="0" data-date="0" data-when="0" data-ukey="千值练|丹帝拜恩 套装" data-first="1" data-search="千值练 t-spark 兽王武神 丹帝拜恩 套装 toyrise 兽王武神 千值练开启《t-spark》toyrise 兽王武神丹帝拜恩套装预订：含战斗机器人丹帝艾斯、幻兽神机烈焰迦楼罗／斩击独角兽／麦格农泰坦及一台额外机体，可变形合体为丹帝拜恩，装备丹帝巨剑，手腕对应 5mm／4mm／3mm 接头（商品页补：price=usd 210.7） 千值练国际有限公司 usd 210.7     开订"><span class="idx">9</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-open">开订</span><span class="flag f-price" title="本条带价格">💰 USD 210.7</span><span class="rel r-high">高相关</span><span class="time">2026-10-30 18:18</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/2922601510/Rp5fCihJi" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">千值练</span> · <span class="brand">丹帝拜恩 套装 / T-SPARK 兽王武神</span> · <span class="line">TOYRISE 兽王武神</span></a></h3><p class="sum">千值练开启《T-SPARK》TOYRISE 兽王武神丹帝拜恩套装预订：含战斗机器人丹帝艾斯、幻兽神机烈焰迦楼罗／斩击独角兽／麦格农泰坦及一台额外机体，可变形合体为丹帝拜恩，装备丹帝巨剑，手腕对应 5mm／4mm／3mm 接头（商品页补：price=USD 210.7）</p><div class="why">相关理由：官方开启预订，可下单</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/2922601510/Rp5fCihJi" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 8 张）" title="点开原微博看大图（共 8 张）"><img src="media/thumb/ae335c26ly1iikjs7lzfhj23343347wh.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/2922601510/Rp5fCihJi" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 8 张）" title="点开原微博看大图（共 8 张）"><img src="media/thumb/ae335c26ly1iikjs9ib4rj2334334npd.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/2922601510/Rp5fCihJi" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 8 张）" title="点开原微博看大图（共 8 张）"><img src="media/thumb/ae335c26ly1iikjs9ha5ij23343347wh.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+5</span></a></div><div class="facts"><i><b>参考价</b>USD 210.7</i></div><a class="src" href="https://weibo.com/2922601510/Rp5fCihJi" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@千值练国际有限公司</span></a></div></div></article>
+<article class="card" data-type="发售" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="1" data-when="1" data-ukey="魔契可动 demoniacal fit|狂信之徒 不朽之躯" data-search="魔契可动 demoniacal fit  狂信之徒 不朽之躯 6 寸可动人偶 魔契可动「狂信之徒 -不朽之躯-」6 寸可动人偶现已上市，各平台零售商发货会略晚于官博公布的发售时间。 魔契可动demoniacalfit   2026年10月 各平台零售商 6 寸 发售"><span class="idx">10</span><div class="head"><span class="badge t-sale">发售</span><span class="flag f-date" title="本条带发售时间">📅 发售 2026年10月</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 15:50</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/6455226378/Rp4huqZzT" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">魔契可动 Demoniacal Fit</span> · <span class="brand">狂信之徒 不朽之躯</span> · <span class="line">6 寸可动人偶</span></a></h3><p class="sum">魔契可动「狂信之徒 -不朽之躯-」6 寸可动人偶现已上市，各平台零售商发货会略晚于官博公布的发售时间。</p><div class="why">相关理由：官方宣布上市，价格未给</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/6455226378/Rp4huqZzT" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/0072Rtgugy1iikfi089pgj315o0hdn7e.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>发售</b>2026年10月</i><i><b>渠道</b>各平台零售商</i><i><b>比例</b>6 寸</i></div><a class="src" href="https://weibo.com/6455226378/Rp4huqZzT" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@魔契可动DemoniacalFit</span></a></div></div></article>
+<article class="card" data-type="发售" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="布鲁可|哥莫拉" data-search="布鲁可 奥特曼 / 初音未来 哥莫拉 绮遇记 1/12 联名系列 · 怪兽派对 布鲁可积木人绮遇记 1/12 奥特曼 × 初音未来联名系列怪兽派对哥莫拉款，将在「未来有你 2026」初音未来演唱会现货首发。 布鲁可积木人    未来有你 2026 演唱会现场 1/12 发售"><span class="idx">11</span><div class="head"><span class="badge t-sale">发售</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 20:08</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7790031436/Rp5XZpEbd" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">布鲁可</span> · <span class="brand">哥莫拉 / 奥特曼 / 初音未来</span> · <span class="line">绮遇记 1/12 联名系列 · 怪兽派对</span></a></h3><p class="sum">布鲁可积木人绮遇记 1/12 奥特曼 × 初音未来联名系列怪兽派对哥莫拉款，将在「未来有你 2026」初音未来演唱会现货首发。</p><div class="why">相关理由：联名新品现货首发信息</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/7790031436/Rp5XZpEbd" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/008vcb2kly1iikmfrhevgj315o1jkx6q.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>渠道</b>未来有你 2026 演唱会现场</i><i><b>比例</b>1/12</i></div><a class="src" href="https://weibo.com/7790031436/Rp5XZpEbd" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@布鲁可积木人</span></a></div></div></article>
+<article class="card" data-type="发售" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="takara tomy|diaclone 系列" data-first="1" data-search="takara tomy 戴亚克隆 diaclone  diaclone 系列 戴亚克隆 diaclone 系列新品已到货（hobbybase 渠道）。 小白哥乌拉诺斯    hobbybase  发售"><span class="idx">12</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-sale">发售</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 21:40</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1918541453/Rp6zDqGXm" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">Takara Tomy</span> · <span class="brand">戴亚克隆 Diaclone</span> · <span class="line">Diaclone 系列</span></a></h3><p class="sum">戴亚克隆 Diaclone 系列新品已到货（hobbybase 渠道）。</p><div class="why">相关理由：新品到货，但未给具体型号与价格</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1918541453/Rp6zDqGXm" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 2 张）" title="点开原微博看大图（共 2 张）"><img src="media/thumb/725a9e8dgy1iikpmn8skbj21400xgqb4.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6zDqGXm" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 2 张）" title="点开原微博看大图（共 2 张）"><img src="media/thumb/725a9e8dgy1iikpmnt45zj21400netdt.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>渠道</b>hobbybase</i></div><a class="src" href="https://weibo.com/1918541453/Rp6zDqGXm" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@小白哥乌拉诺斯</span></a></div></div></article>
+<article class="card" data-type="发售" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="drwu 玩具工作室|小力神" data-first="1" data-search="drwu 玩具工作室 变形金刚 小力神 礼盒版 drwu 玩具工作室应迷友要求做了少量小力神礼盒版，可下单购买；油罐车因故推迟几天出货。 drwu玩具工作室      发售"><span class="idx">13</span><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-sale">发售</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 13:07</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/2352651453/Rp3deqJfD" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">DrWu 玩具工作室</span> · <span class="brand">小力神 / 变形金刚</span> · <span class="line">礼盒版</span></a></h3><p class="sum">DrWu 玩具工作室应迷友要求做了少量小力神礼盒版，可下单购买；油罐车因故推迟几天出货。</p><div class="why">相关理由：少量现货可入，另有延期说明</div></div><div class="side"><a class="src" href="https://weibo.com/2352651453/Rp3deqJfD" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@DrWu玩具工作室</span></a></div></div></article></div></section>
+<section class="group group-all" data-group="新品公布"><h2><span class="badge t-new">新品公布</span><span class="gn">6 条</span><span class="gbar"></span></h2><div class="grid"><article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="布鲁可|初音未来" data-search="布鲁可 初音未来 初音未来 奇迹版 · 未来有你 2026 布鲁可积木人奇迹版「初音未来 · 未来有你 2026」即将上新，官方放出新品情报图。 布鲁可积木人      新品公布"><div class="head"><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 10:00</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7790031436/Rp1Zcw3Wg" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">布鲁可</span> · <span class="brand">初音未来 / 初音未来</span> · <span class="line">奇迹版 · 未来有你 2026</span></a></h3><p class="sum">布鲁可积木人奇迹版「初音未来 · 未来有你 2026」即将上新，官方放出新品情报图。</p><div class="why">相关理由：官方预告即将上市</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/7790031436/Rp1Zcw3Wg" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 4 张）" title="点开原微博看大图（共 4 张）"><img src="media/thumb/008vcb2kgy1iijc48fjczj31ab1pr1kz.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/7790031436/Rp1Zcw3Wg" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 4 张）" title="点开原微博看大图（共 4 张）"><img src="media/thumb/008vcb2kgy1iijc48940tj31ab1prqv6.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/7790031436/Rp1Zcw3Wg" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 4 张）" title="点开原微博看大图（共 4 张）"><img src="media/thumb/008vcb2kgy1iijc484drsj31ab1prnpe.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+1</span></a></div><a class="src" href="https://weibo.com/7790031436/Rp1Zcw3Wg" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@布鲁可积木人</span></a></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="takara tomy|星辰利剑 史达" data-search="takara tomy 变形金刚 星辰利剑 史达 钢铁机神 adamas machina t-spark 日版钢铁机神新品官图发布：amt-03 星辰利剑史达。 蓝色正午      新品公布"><div class="head"><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 12:23</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1459078762/Rp2Vlxk1B" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">Takara Tomy</span> · <span class="brand">星辰利剑 史达 / 变形金刚</span> · <span class="line">钢铁机神 Adamas Machina</span></a></h3><p class="sum">T-Spark 日版钢铁机神新品官图发布：AMT-03 星辰利剑史达。</p><div class="why">相关理由：官图公布，价格与发售日待定</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1459078762/Rp2Vlxk1B" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 4 张）" title="点开原微博看大图（共 4 张）"><img src="media/thumb/56f7c66aly1iik9i4hg46j227i1lvnpd.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1459078762/Rp2Vlxk1B" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 4 张）" title="点开原微博看大图（共 4 张）"><img src="media/thumb/56f7c66aly1iik9i5honyj2334334kjl.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1459078762/Rp2Vlxk1B" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 4 张）" title="点开原微博看大图（共 4 张）"><img src="media/thumb/56f7c66aly1iik9i6ha4cj2334334npd.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+1</span></a></div><a class="src" href="https://weibo.com/1459078762/Rp2Vlxk1B" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@蓝色正午</span></a></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="hasbro|横炮（扫描版）" data-first="1" data-search="hasbro 变形金刚 横炮（扫描版） hp 系列 变形金刚电影 hp 横炮扫描版玩具开箱，被称为「性价比之王」的重涂版本。 少主狸卖萌时间      实物测评"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="badge t-review" style="opacity:.62">实物测评</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 20:26</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/2809645763/Rp65l0kcI" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">Hasbro</span> · <span class="brand">横炮（扫描版） / 变形金刚</span> · <span class="line">HP 系列</span></a></h3><p class="sum">变形金刚电影 HP 横炮扫描版玩具开箱，被称为「性价比之王」的重涂版本。</p><div class="why">相关理由：开箱视频，非官方情报</div><div class="reports"><span class="k">另有 1 条报道：</span><span><a href="https://weibo.com/1088900641/Rp5efuWfk" target="_blank" rel="noopener noreferrer">@塞伯坦守望者 ↗</a><span class="k">2026-10-30 18:15</span></span></div></div><div class="side"><a class="src" href="https://weibo.com/2809645763/Rp65l0kcI" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@少主狸卖萌时间</span></a></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="孩之宝|混沌使徒 擎天柱" data-search="孩之宝 变形金刚 混沌使徒 擎天柱 变形金刚：新纪元 收藏品 《变形金刚：新纪元》混沌使徒擎天柱收藏品限量新品公布 pv 宣传片。 蓝色正午      新品公布"><div class="head"><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 23:53</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1459078762/Rp7rHxH8x" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">孩之宝</span> · <span class="brand">混沌使徒 擎天柱 / 变形金刚</span> · <span class="line">变形金刚：新纪元 收藏品</span></a></h3><p class="sum">《变形金刚：新纪元》混沌使徒擎天柱收藏品限量新品公布 PV 宣传片。</p><div class="why">相关理由：限量收藏品预告</div></div><div class="side"><a class="src" href="https://weibo.com/1459078762/Rp7rHxH8x" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@蓝色正午</span></a></div></div></article>
+<article class="card" data-type="新品公布" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="铁工厂 ironfactory|禍魔鼬 kamaitachi" data-first="1" data-search="铁工厂 ironfactory 变形金刚（原创） 禍魔鼬 kamaitachi iron samurai series if ex-81 铁工厂 iron samurai series if ex-81「陸上無双 禍魔鼬 kamaitachi」公布：夸张飞机头与宽大裤腿设计，配折叠刀，可变形成改装方程式赛车，可选装竹枪式排气管与火焰车贴，附赠暴走韦驮天合体腰部配件（if80 车厢中部）。 铁工厂ironfactory      新品公布"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 18:35</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/3468043824/Rp5moCooz" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">铁工厂 IronFactory</span> · <span class="brand">禍魔鼬 KAMAITACHI / 变形金刚（原创）</span> · <span class="line">Iron Samurai Series IF EX-81</span></a></h3><p class="sum">铁工厂 Iron Samurai Series IF EX-81「陸上無双 禍魔鼬 KAMAITACHI」公布：夸张飞机头与宽大裤腿设计，配折叠刀，可变形成改装方程式赛车，可选装竹枪式排气管与火焰车贴，附赠暴走韦驮天合体腰部配件（IF80 车厢中部）。</p><div class="why">相关理由：第三方新品公布，价格待定</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/3468043824/Rp5moCooz" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 12 张）" title="点开原微博看大图（共 12 张）"><img src="media/thumb/ceb62630gy1iikk64uzd1j21591j01kx.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/3468043824/Rp5moCooz" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 12 张）" title="点开原微博看大图（共 12 张）"><img src="media/thumb/ceb62630gy1iikk64hi91j21591j0ay6.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/3468043824/Rp5moCooz" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 12 张）" title="点开原微博看大图（共 12 张）"><img src="media/thumb/ceb62630gy1iikk649nfcj21591j0h8h.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+9</span></a></div><a class="src" href="https://weibo.com/3468043824/Rp5moCooz" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@铁工厂IronFactory</span></a></div></div></article>
+<article class="card" data-type="新品公布" data-rel="低" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="takara tomy|日版" data-first="1" data-search="takara tomy 变形金刚  日版 takara tomy 日版变形金刚新品黑影图更新（型号未明）。 小白哥乌拉诺斯      新品公布"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-new">新品公布</span><span class="rel r-low">低相关</span><span class="time">2026-10-30 21:31</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1918541453/Rp6vM9fAS" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">Takara Tomy</span> · <span class="brand">变形金刚</span> · <span class="line">日版</span></a></h3><p class="sum">Takara Tomy 日版变形金刚新品黑影图更新（型号未明）。</p><div class="why">相关理由：仅黑影预告，无型号细节</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1918541453/Rp6vM9fAS" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 5 张）" title="点开原微博看大图（共 5 张）"><img src="media/thumb/725a9e8dgy1iikpchlwuhj21400midla.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6vM9fAS" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 5 张）" title="点开原微博看大图（共 5 张）"><img src="media/thumb/725a9e8dgy1iikpchxy09j21400mjtbz.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6vM9fAS" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 5 张）" title="点开原微博看大图（共 5 张）"><img src="media/thumb/725a9e8dgy1iikpcievw3j21400miwjk.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+2</span></a></div><a class="src" href="https://weibo.com/1918541453/Rp6vM9fAS" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@小白哥乌拉诺斯</span></a></div></div></article></div></section>
+<section class="group group-all" data-group="开订"><h2><span class="badge t-open">开订</span><span class="gn">3 条</span><span class="gbar"></span></h2><div class="grid"><article class="card" data-type="开订" data-rel="高" data-isnew="1" data-price="1" data-pre="0" data-date="1" data-when="1" data-ukey="bandai|费蒙特 femto（暗黑之鹰）" data-first="1" data-search="bandai 烙印勇士 费蒙特 femto（暗黑之鹰） s.h.figuarts 万代 s.h.figuarts《剑风传奇 烙印勇士》暗黑之鹰 费蒙特（femto）公布，2027 年 7 月发售，定价 14,300 日元。 小白哥乌拉诺斯 14,300 日元  2027年7月   开订"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-open">开订</span><span class="flag f-price" title="本条带价格">💰 14,300 日元</span><span class="flag f-date" title="本条带发售时间">📅 发售 2027年7月</span><span class="rel r-high">高相关</span><span class="time">2026-10-30 21:38</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1918541453/Rp6yHuA92" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">BANDAI</span> · <span class="brand">费蒙特 FEMTO（暗黑之鹰） / 烙印勇士</span> · <span class="line">S.H.Figuarts</span></a></h3><p class="sum">万代 S.H.Figuarts《剑风传奇 烙印勇士》暗黑之鹰 费蒙特（FEMTO）公布，2027 年 7 月发售，定价 14,300 日元。</p><div class="why">相关理由：官方价格与发售月齐全</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1918541453/Rp6yHuA92" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/725a9e8dgy1iikpj9bt8cj20u011ijux.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6yHuA92" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/725a9e8dgy1iikpj9qwbcj21kw0w0ajc.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6yHuA92" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/725a9e8dgy1iikpl6077tj20u011iadc.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+6</span></a></div><div class="facts"><i><b>参考价</b>14,300 日元</i><i><b>发售</b>2027年7月</i></div><a class="src" href="https://weibo.com/1918541453/Rp6yHuA92" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@小白哥乌拉诺斯</span></a></div></div></article>
+<article class="card" data-type="开订" data-rel="高" data-isnew="1" data-price="1" data-pre="0" data-date="1" data-when="1" data-ukey="takara tomy|丹帝拜恩 dandivine" data-first="1" data-search="takara tomy 兽王武神 丹帝拜恩 dandivine toyrise takara tomy toyrise 系列「兽王武神 dandivine 丹帝拜恩」2027 年 6 月发售，定价 33,000 日元。 小白哥乌拉诺斯 33,000 日元  2027年6月   开订"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-open">开订</span><span class="flag f-price" title="本条带价格">💰 33,000 日元</span><span class="flag f-date" title="本条带发售时间">📅 发售 2027年6月</span><span class="rel r-high">高相关</span><span class="time">2026-10-30 21:33</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1918541453/Rp6wCnVNS" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">Takara Tomy</span> · <span class="brand">丹帝拜恩 DANDIVINE / 兽王武神</span> · <span class="line">TOYRISE</span></a></h3><p class="sum">TAKARA TOMY TOYRISE 系列「兽王武神 DANDIVINE 丹帝拜恩」2027 年 6 月发售，定价 33,000 日元。</p><div class="why">相关理由：官方价格与发售月齐全</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1918541453/Rp6wCnVNS" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/725a9e8dgy1iikpej9s4bj20xc0ukn4s.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6wCnVNS" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/725a9e8dgy1iikpejwvejj20uk0ukwhz.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6wCnVNS" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 9 张）" title="点开原微博看大图（共 9 张）"><img src="media/thumb/725a9e8dgy1iikpekiielj20uk0ukwjc.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+6</span></a></div><div class="facts"><i><b>参考价</b>33,000 日元</i><i><b>发售</b>2027年6月</i></div><a class="src" href="https://weibo.com/1918541453/Rp6wCnVNS" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@小白哥乌拉诺斯</span></a></div></div></article>
+<article class="card" data-type="开订" data-rel="高" data-isnew="1" data-price="1" data-pre="0" data-date="0" data-when="0" data-ukey="千值练|丹帝拜恩 套装" data-first="1" data-search="千值练 t-spark 兽王武神 丹帝拜恩 套装 toyrise 兽王武神 千值练开启《t-spark》toyrise 兽王武神丹帝拜恩套装预订：含战斗机器人丹帝艾斯、幻兽神机烈焰迦楼罗／斩击独角兽／麦格农泰坦及一台额外机体，可变形合体为丹帝拜恩，装备丹帝巨剑，手腕对应 5mm／4mm／3mm 接头（商品页补：price=usd 210.7） 千值练国际有限公司 usd 210.7     开订"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-open">开订</span><span class="flag f-price" title="本条带价格">💰 USD 210.7</span><span class="rel r-high">高相关</span><span class="time">2026-10-30 18:18</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/2922601510/Rp5fCihJi" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">千值练</span> · <span class="brand">丹帝拜恩 套装 / T-SPARK 兽王武神</span> · <span class="line">TOYRISE 兽王武神</span></a></h3><p class="sum">千值练开启《T-SPARK》TOYRISE 兽王武神丹帝拜恩套装预订：含战斗机器人丹帝艾斯、幻兽神机烈焰迦楼罗／斩击独角兽／麦格农泰坦及一台额外机体，可变形合体为丹帝拜恩，装备丹帝巨剑，手腕对应 5mm／4mm／3mm 接头（商品页补：price=USD 210.7）</p><div class="why">相关理由：官方开启预订，可下单</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/2922601510/Rp5fCihJi" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 8 张）" title="点开原微博看大图（共 8 张）"><img src="media/thumb/ae335c26ly1iikjs7lzfhj23343347wh.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/2922601510/Rp5fCihJi" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 8 张）" title="点开原微博看大图（共 8 张）"><img src="media/thumb/ae335c26ly1iikjs9ib4rj2334334npd.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/2922601510/Rp5fCihJi" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 8 张）" title="点开原微博看大图（共 8 张）"><img src="media/thumb/ae335c26ly1iikjs9ha5ij23343347wh.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+5</span></a></div><div class="facts"><i><b>参考价</b>USD 210.7</i></div><a class="src" href="https://weibo.com/2922601510/Rp5fCihJi" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@千值练国际有限公司</span></a></div></div></article></div></section>
+<section class="group group-all" data-group="发售"><h2><span class="badge t-sale">发售</span><span class="gn">4 条</span><span class="gbar"></span></h2><div class="grid"><article class="card" data-type="发售" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="1" data-when="1" data-ukey="魔契可动 demoniacal fit|狂信之徒 不朽之躯" data-search="魔契可动 demoniacal fit  狂信之徒 不朽之躯 6 寸可动人偶 魔契可动「狂信之徒 -不朽之躯-」6 寸可动人偶现已上市，各平台零售商发货会略晚于官博公布的发售时间。 魔契可动demoniacalfit   2026年10月 各平台零售商 6 寸 发售"><div class="head"><span class="badge t-sale">发售</span><span class="flag f-date" title="本条带发售时间">📅 发售 2026年10月</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 15:50</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/6455226378/Rp4huqZzT" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">魔契可动 Demoniacal Fit</span> · <span class="brand">狂信之徒 不朽之躯</span> · <span class="line">6 寸可动人偶</span></a></h3><p class="sum">魔契可动「狂信之徒 -不朽之躯-」6 寸可动人偶现已上市，各平台零售商发货会略晚于官博公布的发售时间。</p><div class="why">相关理由：官方宣布上市，价格未给</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/6455226378/Rp4huqZzT" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/0072Rtgugy1iikfi089pgj315o0hdn7e.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>发售</b>2026年10月</i><i><b>渠道</b>各平台零售商</i><i><b>比例</b>6 寸</i></div><a class="src" href="https://weibo.com/6455226378/Rp4huqZzT" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@魔契可动DemoniacalFit</span></a></div></div></article>
+<article class="card" data-type="发售" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="布鲁可|哥莫拉" data-search="布鲁可 奥特曼 / 初音未来 哥莫拉 绮遇记 1/12 联名系列 · 怪兽派对 布鲁可积木人绮遇记 1/12 奥特曼 × 初音未来联名系列怪兽派对哥莫拉款，将在「未来有你 2026」初音未来演唱会现货首发。 布鲁可积木人    未来有你 2026 演唱会现场 1/12 发售"><div class="head"><span class="badge t-sale">发售</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 20:08</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7790031436/Rp5XZpEbd" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">布鲁可</span> · <span class="brand">哥莫拉 / 奥特曼 / 初音未来</span> · <span class="line">绮遇记 1/12 联名系列 · 怪兽派对</span></a></h3><p class="sum">布鲁可积木人绮遇记 1/12 奥特曼 × 初音未来联名系列怪兽派对哥莫拉款，将在「未来有你 2026」初音未来演唱会现货首发。</p><div class="why">相关理由：联名新品现货首发信息</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/7790031436/Rp5XZpEbd" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 1 张）" title="点开原微博看大图（共 1 张）"><img src="media/thumb/008vcb2kly1iikmfrhevgj315o1jkx6q.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>渠道</b>未来有你 2026 演唱会现场</i><i><b>比例</b>1/12</i></div><a class="src" href="https://weibo.com/7790031436/Rp5XZpEbd" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@布鲁可积木人</span></a></div></div></article>
+<article class="card" data-type="发售" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="takara tomy|diaclone 系列" data-first="1" data-search="takara tomy 戴亚克隆 diaclone  diaclone 系列 戴亚克隆 diaclone 系列新品已到货（hobbybase 渠道）。 小白哥乌拉诺斯    hobbybase  发售"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-sale">发售</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 21:40</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1918541453/Rp6zDqGXm" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">Takara Tomy</span> · <span class="brand">戴亚克隆 Diaclone</span> · <span class="line">Diaclone 系列</span></a></h3><p class="sum">戴亚克隆 Diaclone 系列新品已到货（hobbybase 渠道）。</p><div class="why">相关理由：新品到货，但未给具体型号与价格</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1918541453/Rp6zDqGXm" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 2 张）" title="点开原微博看大图（共 2 张）"><img src="media/thumb/725a9e8dgy1iikpmn8skbj21400xgqb4.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6zDqGXm" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 2 张）" title="点开原微博看大图（共 2 张）"><img src="media/thumb/725a9e8dgy1iikpmnt45zj21400netdt.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a></div><div class="facts"><i><b>渠道</b>hobbybase</i></div><a class="src" href="https://weibo.com/1918541453/Rp6zDqGXm" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@小白哥乌拉诺斯</span></a></div></div></article>
+<article class="card" data-type="发售" data-rel="中" data-isnew="1" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="drwu 玩具工作室|小力神" data-first="1" data-search="drwu 玩具工作室 变形金刚 小力神 礼盒版 drwu 玩具工作室应迷友要求做了少量小力神礼盒版，可下单购买；油罐车因故推迟几天出货。 drwu玩具工作室      发售"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-sale">发售</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 13:07</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/2352651453/Rp3deqJfD" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">DrWu 玩具工作室</span> · <span class="brand">小力神 / 变形金刚</span> · <span class="line">礼盒版</span></a></h3><p class="sum">DrWu 玩具工作室应迷友要求做了少量小力神礼盒版，可下单购买；油罐车因故推迟几天出货。</p><div class="why">相关理由：少量现货可入，另有延期说明</div></div><div class="side"><a class="src" href="https://weibo.com/2352651453/Rp3deqJfD" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@DrWu玩具工作室</span></a></div></div></article></div></section>
+<section class="group group-all" data-group="展会"><h2><span class="badge t-event">展会</span><span class="gn">2 条</span><span class="gbar"></span></h2><div class="grid"><article class="card" data-type="展会" data-rel="中" data-isnew="0" data-price="0" data-pre="0" data-date="1" data-when="1" data-ukey="塑唐玩具|2026 杭州国际模型文化节" data-first="1" data-search="塑唐玩具 多ip  2026 杭州国际模型文化节 2026 杭州国际模型文化节（10 月 30 日–11 月 1 日，杭州国际博览中心二期）塑唐玩具展位 1f-a18 现场展出，megahouse 展台有 1:1 高智能方程式赛车展示，鹰翔模型军模展位同期开放。 塑唐玩具   2026年10月30日 杭州国际博览中心二期 1f-a18  展会"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-event">展会</span><span class="flag f-date" title="本条带发售时间">📅 发售 2026年10月30日</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 18:33</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1780846941/Rp5lzdCYD" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">塑唐玩具</span> · <span class="brand">多IP</span> · <span class="line">2026 杭州国际模型文化节</span></a></h3><p class="sum">2026 杭州国际模型文化节（10 月 30 日–11 月 1 日，杭州国际博览中心二期）塑唐玩具展位 1F-A18 现场展出，MegaHouse 展台有 1:1 高智能方程式赛车展示，鹰翔模型军模展位同期开放。</p><div class="why">相关理由：线下展会，含具体时间地点与展位</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1780846941/Rp5lzdCYD" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 11 张）" title="点开原微博看大图（共 11 张）"><img src="media/thumb/6a25915dly1iikk6w0o58j235s2dcu10.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1780846941/Rp5lzdCYD" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 11 张）" title="点开原微博看大图（共 11 张）"><img src="media/thumb/6a25915dly1iikk6w26mcj235s2dcx6r.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1780846941/Rp5lzdCYD" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 11 张）" title="点开原微博看大图（共 11 张）"><img src="media/thumb/6a25915dly1iikk6vu41cj235s2dcb2c.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+8</span></a></div><div class="facts"><i><b>发售</b>2026年10月30日</i><i><b>渠道</b>杭州国际博览中心二期 1F-A18</i></div><a class="src" href="https://weibo.com/1780846941/Rp5lzdCYD" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@塑唐玩具</span></a></div></div></article>
+<article class="card" data-type="展会" data-rel="低" data-isnew="0" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="p:5359819025287033" data-first="1" data-search="touchtoys 冭趣 无天于上 2035   touchtoys 冭趣发布杭州 hcfc 展会今日动态（无天于上 2035 系列现场）。 touchtoys冭趣    杭州 hcfc  展会"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-event">展会</span><span class="rel r-low">低相关</span><span class="time">2026-10-30 20:38</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/7685535767/Rp6aimboJ" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">TouchToys 冭趣</span> · <span class="brand">无天于上 2035</span></a></h3><p class="sum">TouchToys 冭趣发布杭州 HCFC 展会今日动态（无天于上 2035 系列现场）。</p><div class="why">相关理由：展会展出动态，无产品细节</div></div><div class="side"><div class="facts"><i><b>渠道</b>杭州 HCFC</i></div><a class="src" href="https://weibo.com/7685535767/Rp6aimboJ" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@TouchToys冭趣</span></a></div></div></article></div></section>
+<section class="group group-all" data-group="实物测评"><h2><span class="badge t-review">实物测评</span><span class="gn">4 条</span><span class="gbar"></span></h2><div class="grid"><article class="card" data-type="实物测评" data-rel="中" data-isnew="0" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="threezero|狂犬（齐力古专用机）" data-first="1" data-search="threezero 装甲骑兵 votoms 狂犬（齐力古专用机） 合金成品 threezero 装甲骑兵 狂犬快速评测：人型全高 16cm，合金份量足，旧化涂装水准高，左手巨爪可前后移动、掌心机关炮可动，驾驶舱可开启放入不可动齐力古小人偶，背包可释出手榴弹；缺点是部分关节过紧、裙甲与小腿后遮甲板偏脆。 928_toys_laboratory      实物测评"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-review">实物测评</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 09:33</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/5490307047/Rp1OnaJkA" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">threezero</span> · <span class="brand">狂犬（齐力古专用机） / 装甲骑兵 VOTOMS</span> · <span class="line">合金成品</span></a></h3><p class="sum">threezero 装甲骑兵 狂犬快速评测：人型全高 16cm，合金份量足，旧化涂装水准高，左手巨爪可前后移动、掌心机关炮可动，驾驶舱可开启放入不可动齐力古小人偶，背包可释出手榴弹；缺点是部分关节过紧、裙甲与小腿后遮甲板偏脆。</p><div class="why">相关理由：玩家详细实测评测，可作购买参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/5490307047/Rp1OnaJkA" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 15 张）" title="点开原微博看大图（共 15 张）"><img src="media/thumb/005ZyLFtgy1iik4lfo64yj30om0wtdlr.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/5490307047/Rp1OnaJkA" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 15 张）" title="点开原微博看大图（共 15 张）"><img src="media/thumb/005ZyLFtgy1iik4lihwuuj30om0wt44d.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/5490307047/Rp1OnaJkA" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 15 张）" title="点开原微博看大图（共 15 张）"><img src="media/thumb/005ZyLFtgy1iik4ljch7yj30om0wt0yp.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+12</span></a></div><a class="src" href="https://weibo.com/5490307047/Rp1OnaJkA" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@928_Toys_Laboratory</span></a></div></div></article>
+<article class="card" data-type="实物测评" data-rel="中" data-isnew="0" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="threezero|兽犬（菲亚娜专用机）" data-first="1" data-search="threezero 装甲骑兵 votoms 兽犬（菲亚娜专用机） 合金成品 threezero 装甲骑兵 兽犬快速评测：人型约 14.5cm，粉红涂装配旧化效果抢眼，右臂同时配备火神机枪与格斗钢爪，驾驶舱可放入不可动菲亚娜小人偶；同样存在关节过紧、部分部件偏脆的问题，整体素质与细节还原属高水平。 928_toys_laboratory      实物测评"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-review">实物测评</span><span class="rel r-mid">中相关</span><span class="time">2026-10-30 09:34</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/5490307047/Rp1P2gd6s" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">threezero</span> · <span class="brand">兽犬（菲亚娜专用机） / 装甲骑兵 VOTOMS</span> · <span class="line">合金成品</span></a></h3><p class="sum">threezero 装甲骑兵 兽犬快速评测：人型约 14.5cm，粉红涂装配旧化效果抢眼，右臂同时配备火神机枪与格斗钢爪，驾驶舱可放入不可动菲亚娜小人偶；同样存在关节过紧、部分部件偏脆的问题，整体素质与细节还原属高水平。</p><div class="why">相关理由：玩家详细实测评测，可作购买参考</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/5490307047/Rp1P2gd6s" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 14 张）" title="点开原微博看大图（共 14 张）"><img src="media/thumb/005ZyLFtgy1iik4n7rljbj30om0wttet.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/5490307047/Rp1P2gd6s" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 14 张）" title="点开原微博看大图（共 14 张）"><img src="media/thumb/005ZyLFtgy1iik4n8mt5bj30om0wt44j.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/5490307047/Rp1P2gd6s" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 14 张）" title="点开原微博看大图（共 14 张）"><img src="media/thumb/005ZyLFtgy1iik4n9al84j30mi0u0gqt.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+11</span></a></div><a class="src" href="https://weibo.com/5490307047/Rp1P2gd6s" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@928_Toys_Laboratory</span></a></div></div></article>
+<article class="card" data-type="实物测评" data-rel="低" data-isnew="0" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="takara tomy|铁皮 ironhide" data-search="takara tomy 变形金刚 铁皮 ironhide overgear og-01 takara tomy 日版 overgear og-01 铁皮开盒图（来自 akisinnet），外观评价偏素。 小白哥乌拉诺斯      实物测评"><div class="head"><span class="badge t-review">实物测评</span><span class="rel r-low">低相关</span><span class="time">2026-10-30 21:47</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/1918541453/Rp6CcsuWo" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">Takara Tomy</span> · <span class="brand">铁皮 Ironhide / 变形金刚</span> · <span class="line">Overgear OG-01</span></a></h3><p class="sum">Takara Tomy 日版 Overgear OG-01 铁皮开盒图（来自 akisinnet），外观评价偏素。</p><div class="why">相关理由：开盒图，非官方情报</div></div><div class="side"><div class="thumbs"><a class="thumb" href="https://weibo.com/1918541453/Rp6CcsuWo" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 1 张配图（共 11 张）" title="点开原微博看大图（共 11 张）"><img src="media/thumb/725a9e8dgy1iikpsio7evj21kw16ogvl.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6CcsuWo" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 2 张配图（共 11 张）" title="点开原微博看大图（共 11 张）"><img src="media/thumb/725a9e8dgy1iikpsjfywej21kw16oqbl.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"></a><a class="thumb" href="https://weibo.com/1918541453/Rp6CcsuWo" target="_blank" rel="noopener noreferrer" aria-label="打开原微博查看第 3 张配图（共 11 张）" title="点开原微博看大图（共 11 张）"><img src="media/thumb/725a9e8dgy1iikpskj8u6j21kw16odlu.jpg" alt="" loading="lazy" onerror="this.closest('.thumb').style.display='none'"><span class="more">+8</span></a></div><a class="src" href="https://weibo.com/1918541453/Rp6CcsuWo" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@小白哥乌拉诺斯</span></a></div></div></article>
+<article class="card" data-type="实物测评" data-rel="低" data-isnew="0" data-price="0" data-pre="0" data-date="0" data-when="0" data-ukey="寿屋|雷神" data-first="1" data-search="寿屋 六角机牙 雷神 合金成品 模寿、寿屋六角机牙雷神合金成品晒图。 路边de大叔      实物测评"><div class="head"><span class="nbadge">🆕 未读</span><span class="badge t-review">实物测评</span><span class="rel r-low">低相关</span><span class="time">2026-10-30 19:00</span></div><div class="body"><div class="main"><h3><a href="https://weibo.com/3963601049/Rp5woyXxN" target="_blank" rel="noopener noreferrer" title="打开原博查看原文与原图"><span class="brand">寿屋</span> · <span class="brand">雷神 / 六角机牙</span> · <span class="line">合金成品</span></a></h3><p class="sum">模寿、寿屋六角机牙雷神合金成品晒图。</p><div class="why">相关理由：玩家晒图</div></div><div class="side"><a class="src" href="https://weibo.com/3963601049/Rp5woyXxN" target="_blank" rel="noopener noreferrer">打开原博 ↗<span style="font-weight:400;opacity:.75">@路边de大叔</span></a></div></div></article></div></section></div>
+  <div class="empty" id="empty" style="display:none">没有匹配的情报，换个关键词或筛选条件试试。</div>
+  <div class="legend"><span data-only-view="new">当前为 <b>新品清单</b>：只列微博里出现的新品与它们的开订 / 发售 / 再版动向，按「首次亮相 → 可下单」排序，同一款产品的多条微博已合并。</span><span data-only-view="all" hidden>当前为 <b>全部情报</b>：含实物测评、展会限定等全部类别，按类型分组。</span>　·　点击右栏缩略图可放大看原图，点标题或按钮可跳转原博（需登录微博）。　·　生成于 2026-10-31 08:05　·　点击右栏缩略图可放大看原图，点标题或按钮可跳转原博（需登录微博）。</div>
+  <div class="dayfoot" id="dayfoot"><span class="df-t">第 29 / 29 期读完</span><a class="dn-btn" href="2026-10-30.html" rel="prev"><span class="dn-ar">‹</span>上一期 10-30</a><span class="dn-btn off">已是最新一期</span><a class="dn-btn" href="archive.html">全部日期</a></div>
+</main>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="配图放大预览">
+  <button class="lb-btn lb-close" type="button" aria-label="关闭预览">×</button>
+  <button class="lb-btn lb-nav lb-prev" type="button" aria-label="上一张">‹</button>
+  <button class="lb-btn lb-nav lb-next" type="button" aria-label="下一张">›</button>
+  <img id="lb-img" alt="">
+  <div class="lb-hint" id="lb-hint" style="display:none">⚠️ 图片没加载出来 —— 请确认这个 HTML 同目录下存在 <b>media/</b> 文件夹（由 <code>attach_media.py --download</code> 生成）。</div>
+  <div class="cap" id="lb-cap"></div>
+  <div class="lb-idx" id="lb-idx"></div>
+  <a class="lb-ori" id="lb-ori" target="_blank" rel="noopener noreferrer"
+     referrerpolicy="no-referrer">查看原图 ↗</a>
+</div>
+
+<div id="probe"></div>
+<script></script>
+<script>
+(function(){
+  var q = document.getElementById('q');
+  var cards = [].slice.call(document.querySelectorAll('.card'));
+  var groups = [].slice.call(document.querySelectorAll('.group'));
+  var typeChips = [].slice.call(document.querySelectorAll('[data-type-chip]'));
+  var relChips  = [].slice.call(document.querySelectorAll('[data-rel-chip]'));
+  var flagChips = [].slice.call(document.querySelectorAll('[data-flag-chip]'));
+  var viewBtns  = [].slice.call(document.querySelectorAll('[data-view]'));
+  var out = document.getElementById('count');
+  var empty = document.getElementById('empty');
+  var state = {type:'全部', rel:'全部', flag:'全部', view:'new', unread:false};
+
+  function match(c){
+    // 两个视图各渲染一份 DOM：新品清单容器里的卡片只属于新品视图，
+    // 分类分组里的卡片只属于「全部情报」视图
+    var inNew = !!(c.closest && c.closest('.group-new'));
+    if (inNew !== (state.view === 'new')) return false;
+    // 新品视图下是纯清单、无分类，类型筛选只在「全部情报」视图生效
+    if (state.type !== '全部' && c.dataset.type !== state.type) return false;
+    if (state.rel === '高' && c.dataset.rel !== '高') return false;
+    // 标记筛选：价格 / 预售时间 / 发售时间（卡片上的 💰 ⏰ 📅）
+    if (state.flag === '价格' && c.dataset.price !== '1') return false;
+    if (state.flag === '预售' && c.dataset.pre !== '1') return false;
+    if (state.flag === '发售' && c.dataset.date !== '1') return false;
+    // 「只看未读」由未读模块拨动 state.unread，只保留「本日新出现」且还没读过的卡。
+    // 两个条件都得判：只判 .read 的话，data-first="0" 的旧闻卡既不算未读、也不会被
+    // 标上 .read，会永远赖在列表里（实测 27 张未读旁边还挂着 9 张旧闻，筛完数量和
+    // 顶栏未读胶囊对不上）。总览页不渲染未读组件，state.unread 恒为 false，不受影响。
+    if (state.unread && (c.dataset.first !== '1' || c.classList.contains('read')))
+      return false;
+    var t = (q.value || '').trim().toLowerCase();
+    if (t && (c.dataset.search || '').indexOf(t) === -1) return false;
+    return true;
+}
+  function apply(){
+    var n = 0, shown = 0, total = 0;
+    cards.forEach(function(c){
+      var inNew = !!(c.closest && c.closest('.group-new'));
+      // 分母跟随当前视图：新品视图数 group-new 里的卡片，
+      // 全部情报视图数 group-all 里的卡片（否则全部视图会显示 N/新品数）
+      if (inNew === (state.view === 'new')) total++;
+      var ok = match(c);
+      c.style.display = ok ? '' : 'none';
+      if (ok) n++;
+      // 计数只统计当前视图真正可见的那份卡片
+      // （新品清单与分类分组里各渲染一份 DOM，靠所在容器区分）
+      if (ok) shown++;
+    });
+    // 分组标题随筛选联动：组内没有可见卡片就整组隐藏
+    // （纯新品清单不参与类型筛选，整体显隐由视图决定）
+    groups.forEach(function(g){
+      if (g.dataset.group === '__new__') return;
+      var vis = 0;
+      [].slice.call(g.querySelectorAll('.card')).forEach(function(c){
+        if (c.style.display !== 'none') vis++;
+      });
+      g.classList.toggle('off', vis === 0);
+    });
+    var newSec = document.querySelector('.group-new');
+    if (newSec) newSec.style.display = (state.view === 'new') ? '' : 'none';
+    out.textContent = '显示 ' + shown + ' / ' + total + ' 条';
+    empty.style.display = n ? 'none' : '';
+  }
+  typeChips.forEach(function(b){
+    b.addEventListener('click', function(){
+      state.type = b.dataset.typeChip;
+      typeChips.forEach(function(x){ x.classList.toggle('on', x === b); });
+      apply();
+    });
+  });
+  relChips.forEach(function(b){
+    b.addEventListener('click', function(){
+      state.rel = b.dataset.relChip;
+      relChips.forEach(function(x){ x.classList.toggle('on', x === b); });
+      apply();
+    });
+  });
+  flagChips.forEach(function(b){
+    b.addEventListener('click', function(){
+      state.flag = b.dataset.flagChip;
+      flagChips.forEach(function(x){ x.classList.toggle('on', x === b); });
+      apply();
+    });
+  });
+  viewBtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      state.view = b.dataset.view;
+      viewBtns.forEach(function(x){ x.classList.toggle('on', x === b); });
+      document.body.classList.toggle('view-new', state.view === 'new');
+      // 两个视图的类型筛选语义不同，切视图时把类型筛选重置回「全部」
+      state.type = '全部';
+      typeChips.forEach(function(x){
+        x.classList.toggle('on', x.dataset.typeChip === '全部');
+      });
+      // 纯新品清单没有分类，类型筛选条在「新品清单」视图下隐藏
+      var chipBox = document.getElementById('typeChips');
+      if (chipBox) chipBox.style.display = (state.view === 'new') ? 'none' : '';
+      apply();
+      syncViewNotes();
+    });
+  });
+  q.addEventListener('input', function(){ apply(); syncViewNotes(); });
+  function syncViewNotes(){
+    // 视图相关小字（如「当前为新品清单」提示）随视图显隐
+    document.querySelectorAll('[data-only-view]').forEach(function(el){
+      el.hidden = el.dataset.onlyView !== state.view;
+    });
+  }
+  // 初始状态：默认新品清单，类型筛选条隐藏
+  (function init(){
+    var chipBox = document.getElementById('typeChips');
+    if (chipBox) chipBox.style.display = (state.view === 'new') ? 'none' : '';
+    syncViewNotes();
+  })();
+  document.addEventListener('keydown', function(e){
+    // 放大预览打开时把键盘让给它，避免 Esc / 数字键冲突
+    if (document.body.classList.contains('lb-lock')) return;
+    if (e.key === '/' && document.activeElement !== q){ e.preventDefault(); q.focus(); }
+    if (e.key === 'Escape' && document.activeElement === q){ q.value=''; apply(); q.blur(); }
+  });
+  apply();
+  // 暴露给总览页（build_index.py）：它要在筛选链上再叠一层「按日期过滤」，
+  // 直接把 apply 包一层即可，不必复制这段逻辑。
+  window.__apply = apply;
+  // 暴露 state 给未读模块：「只看未读」要挂进同一条筛选链，否则两边各算一遍、计数会打架
+  window.__state = state;
+})();
+
+/* 配图放大预览：点缩略图弹出，同一条情报的全部配图可左右翻 */
+(function(){
+  var lb = document.getElementById('lb');
+  if (!lb) return;
+  var img  = document.getElementById('lb-img');
+  var cap  = document.getElementById('lb-cap');
+  var idx  = document.getElementById('lb-idx');
+  var ori  = document.getElementById('lb-ori');
+  var hint = document.getElementById('lb-hint');
+  var prev = lb.querySelector('.lb-prev');
+  var next = lb.querySelector('.lb-next');
+
+  var gallery = [];   // 预览图地址（本地相对路径优先，构建时已算好）
+  var caption = '';   // 「博主 · 标题」
+  var origin  = '';   // 原博链接
+  var pos = 0, opener = null;
+
+  function paint(){
+    if (!gallery.length) return;
+    var u = gallery[pos];
+    img.hidden = false;
+    if (hint) hint.style.display = 'none';
+    img.src = u;
+    img.alt = caption;
+
+    cap.textContent = '';
+    cap.appendChild(document.createTextNode(
+      caption + '　（' + (pos + 1) + '/' + gallery.length + '）'));
+    if (gallery.length > 1){
+      var k = document.createElement('span');
+      k.className = 'k';
+      k.textContent = '　← → 切换';
+      cap.appendChild(k);
+    }
+    if (origin){
+      var a = document.createElement('a');
+      a.href = origin;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.textContent = '　查看原博 ↗';
+      cap.appendChild(a);
+    }
+
+    idx.textContent = (pos + 1) + ' / ' + gallery.length;
+    var multi = gallery.length > 1;
+    prev.disabled = !multi;
+    next.disabled = !multi;
+    ori.href = u;                     // 「查看原图」直达未压缩原图
+  }
+  function open(list, i, capText, href, el){
+    if (!list.length) return;
+    gallery = list;
+    caption = capText || '';
+    origin  = href || '';
+    pos = Math.min(Math.max(0, i), list.length - 1);
+    opener = el || null;
+    lb.classList.add('on');
+    document.body.classList.add('lb-lock');
+    paint();
+    (list.length > 1 ? next : lb.querySelector('.lb-close')).focus();
+  }
+  function close(){
+    lb.classList.remove('on');
+    document.body.classList.remove('lb-lock');
+    img.removeAttribute('src');
+    if (opener && opener.focus) opener.focus();
+  }
+  function step(d){
+    if (gallery.length < 2) return;
+    pos = (pos + d + gallery.length) % gallery.length;
+    paint();
+  }
+
+  // 点缩略图：从所属卡片的 data-gallery 取出完整图集（含未显示的 +N 张）
+  document.addEventListener('click', function(e){
+    var t = e.target.closest ? e.target.closest('.thumb') : null;
+    if (!t) return;
+    var card = t.closest('.card');
+    if (!card) return;
+    var box = card.querySelector('.thumbs');
+    if (!box) return;
+
+    var list = [];
+    try { list = JSON.parse(box.dataset.gallery || '[]'); } catch (err) { list = []; }
+    // 没有图集（发布模式：缩略图是 <a>，点开直接跳原微博）→ 不拦截，交给浏览器
+    if (!list.length) return;
+    e.preventDefault();
+    open(list, parseInt(t.dataset.i || '0', 10) || 0,
+         box.dataset.cap || '', box.dataset.href || '', t);
+  });
+
+  // 本地图片缺失时给出明确提示，而不是只留一块空白
+  img.addEventListener('error', function(){
+    img.hidden = true;
+    if (hint) hint.style.display = '';
+  });
+
+  lb.querySelector('.lb-close').addEventListener('click', close);
+  prev.addEventListener('click', function(e){ e.stopPropagation(); step(-1); });
+  next.addEventListener('click', function(e){ e.stopPropagation(); step(1); });
+  ori.addEventListener('click', function(e){ e.stopPropagation(); });
+  lb.addEventListener('click', function(e){
+    if (e.target === lb) close();   // 点背景关闭；点图片本身不关
+  });
+
+  // 键盘：capture 阶段拦截，避免与搜索框的 Esc 清空冲突
+  document.addEventListener('keydown', function(e){
+    if (!lb.classList.contains('on')) return;
+    if (e.key === 'Escape'){ e.stopPropagation(); close(); }
+    else if (e.key === 'ArrowLeft'){ e.stopPropagation(); step(-1); }
+    else if (e.key === 'ArrowRight'){ e.stopPropagation(); step(1); }
+  }, true);
+
+  // 触屏左右滑动
+  var x0 = null;
+  lb.addEventListener('touchstart', function(e){
+    x0 = e.changedTouches[0].clientX;
+  }, {passive:true});
+  lb.addEventListener('touchend', function(e){
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 45) step(dx < 0 ? 1 : -1);
+    x0 = null;
+  }, {passive:true});
+})();
+
+/* 未读 / 已读：本日新出现的条目，读到即自动标记已读
+ *
+ * 状态存在 localStorage —— 同一浏览器里不同日期的简报文件、不同进程共享（已实测），
+ * 所以「今天读过的」明天再看不会重新提示。
+ *
+ * ⚠️ 局限：file:// 直接打开 与 内置预览面板（127.0.0.1 随机端口）的 origin 不同，
+ * 状态不互通。换了打开方式/浏览器后，点「导出已读回执」把 read-log.json 放进
+ * data/ 目录，构建时会烘焙进页面（window.__READ_BAKED）续上。
+ */
+(function(){
+  var bar = document.getElementById('unreadbar');
+  if (!bar) return;                    // 总览页没有这个组件，自动跳过
+  var LS_KEY  = 'wfir:read:v1';
+  var DWELL   = 2000;                  // 卡片在视口里稳定停留多久算「读过」(ms)
+  var MAXKEEP = 3000;                  // 本地最多保留多少条已读键
+  var PROBE   = /[?&]probe=1/.test(location.search);
+
+  var cards   = [].slice.call(document.querySelectorAll('.card[data-first="1"]'));
+  if (!cards.length) return;
+  var box     = document.getElementById('un-read');
+  var totalEl = document.getElementById('un-total');
+  var pill    = document.getElementById('un-pill');
+  var hint    = document.getElementById('un-hint');
+  var probe   = document.getElementById('probe');
+  var toggle  = document.getElementById('un-toggle');
+  var allBtn  = document.getElementById('un-all');
+  var expBtn  = document.getElementById('un-export');
+  var ustate  = {onlyUnread:false};
+
+  function load(){
+    var m = {};
+    try { m = JSON.parse(localStorage.getItem(LS_KEY) || '{}') || {}; }
+    catch (e) { m = {}; }
+    var baked = window.__READ_BAKED;
+    if (baked && baked.keys){
+      for (var k in baked.keys){ if (!(k in m)) m[k] = baked.keys[k]; }
+    }
+    return m;
+  }
+  var read = load();
+  var byKey = {};
+
+  function save(){
+    try {
+      var ks = Object.keys(read);
+      if (ks.length > MAXKEEP){
+        ks.sort(function(a, b){ return (read[a] || 0) - (read[b] || 0); });
+        ks.slice(0, ks.length - MAXKEEP).forEach(function(k){ delete read[k]; });
+      }
+      localStorage.setItem(LS_KEY, JSON.stringify(read));
+    } catch (e) {}
+  }
+  function paintCard(c, on){
+    if (!c) return;
+    c.classList.toggle('read', !!on);
+    var b = c.querySelector('.nbadge');
+    if (b){
+      b.classList.toggle('read', !!on);
+      b.textContent = on ? '✓ 已读' : '🆕 未读';
+    }
+  }
+  function counts(){
+    var n = 0, seen = 0, mark = {};
+    for (var i = 0; i < cards.length; i++){
+      var k = cards[i].dataset.ukey;
+      if (k && mark[k]) continue;     // 同一张卡在页面上有两份 DOM，只数一次
+      if (k) mark[k] = 1;
+      seen++;
+      if (!(k && read[k])) n++;
+    }
+    return {unread:n, total:seen};
+  }
+  function paint(){
+    var c = counts();
+    if (box) box.textContent = c.unread;
+    if (pill) pill.textContent = c.unread;
+    if (totalEl) totalEl.textContent = c.total;
+    bar.classList.toggle('done', c.unread === 0);
+    if (hint){
+      hint.textContent = c.unread
+        ? ('共 ' + c.total + ' 件本日新出现，读到即自动标记已读'
+           + (ustate.onlyUnread ? '（当前只看未读，已暂停自动标记）' : ''))
+        : ('✅ ' + c.total + ' 件本日新出现的情报已全部读完');
+    }
+    if (PROBE && probe){
+      probe.textContent = 'R::未读=' + c.unread + '/首现=' + c.total
+        + ' 已读键=' + Object.keys(read).length
+        + ' hidden=' + document.hidden;
+    }
+  }
+  function mark(k){
+    if (!k || read[k]) return;
+    read[k] = Math.round(Date.now() / 1000);
+    (byKey[k] || []).forEach(function(c){ paintCard(c, true); });
+    save(); paint();
+  }
+  function syncFilter(){
+    if (window.__state) window.__state.unread = ustate.onlyUnread;
+    if (window.__apply) window.__apply();
+  }
+
+  cards.forEach(function(c){
+    var k = c.dataset.ukey;
+    if (!k) return;
+    (byKey[k] = byKey[k] || []).push(c);
+    if (read[k]) paintCard(c, true);
+  });
+  // 以「去重后的键」为扫描单位。同一张卡在页面上有两份 DOM（新品清单一份、
+  // 全部情报一份），隐藏的那份 getBoundingClientRect 全为 0；若按元素逐个判可见性，
+  // 隐藏副本会把可见副本刚设好的计时器清零，停留时间永远累计不起来。
+  var keys = Object.keys(byKey);
+
+  // 读到即算读过：每 1 秒用几何位置扫一遍，卡片在视口里稳定停留 DWELL 毫秒后
+  // 自动标记已读。不用 IntersectionObserver 有两个实测原因：
+  //   ① 无头浏览器（自检环境）从不派发 IO 回调，功能无法回归验证；
+  //   ② 本地 file:// 在部分环境下滚动事件/合成帧不完整，IO 依赖它们。
+  // 几何判定只依赖布局，最不挑环境，延迟最多 1 秒。
+  var since = {};      // ukey -> 首次进入视口的时刻
+  function sweep(){
+    if (ustate.onlyUnread || document.hidden) return;
+    var now = Date.now(), vh = window.innerHeight;
+    for (var i = 0; i < keys.length; i++){
+      var k = keys[i];
+      if (read[k]) continue;
+      // 只要任一 DOM 副本确实可见（高度非 0 且落在视口安全区内）就算「在看着」
+      var vis = false, arr = byKey[k];
+      for (var j = 0; j < arr.length; j++){
+        var r = arr[j].getBoundingClientRect();
+        if (r.height > 0 && r.top < vh - 160 && r.bottom > 120){ vis = true; break; }
+      }
+      if (!vis){ since[k] = 0; continue; }
+      if (!since[k]) since[k] = now;
+      else if (now - since[k] >= DWELL) mark(k);
+    }
+  }
+  setInterval(sweep, 1000);
+  setTimeout(sweep, 400);
+
+  // 点标题 / 点「打开原博」= 明确要读，立刻标记，不必等停留
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('.card h3 a, a.src') : null;
+    if (!a) return;
+    var c = a.closest('.card');
+    if (c) mark(c.dataset.ukey);
+  });
+
+  if (toggle) toggle.addEventListener('click', function(){
+    ustate.onlyUnread = !ustate.onlyUnread;
+    toggle.classList.toggle('on', ustate.onlyUnread);
+    toggle.textContent = ustate.onlyUnread ? '显示全部' : '只看未读';
+    syncFilter(); paint();
+  });
+  if (allBtn) allBtn.addEventListener('click', function(){
+    cards.forEach(function(c){
+      var k = c.dataset.ukey;
+      if (k) read[k] = Math.round(Date.now() / 1000);
+    });
+    save();
+    cards.forEach(function(c){ paintCard(c, true); });
+    paint(); syncFilter();
+  });
+  if (expBtn) expBtn.addEventListener('click', function(){
+    var blob = new Blob([JSON.stringify({
+      version: 1, exported_at: new Date().toISOString(), keys: read
+    }, null, 2)], {type:'application/json'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'read-log.json';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  });
+
+  paint();
+  syncFilter();
+})();
+
+/* 日期时间线：读完一天直接翻到相邻一天（下拉任选 / 键盘 [ ]） */
+(function(){
+  var nav = document.getElementById('daynav');
+  if (!nav) return;
+  var prev = nav.getAttribute('data-prev') || '';
+  var next = nav.getAttribute('data-next') || '';
+  var sel  = document.getElementById('dn-sel');
+  if (sel) sel.addEventListener('change', function(){
+    if (sel.value) location.href = sel.value;
+  });
+  document.addEventListener('keydown', function(e){
+    // 放大预览开着时把键盘让给它（它用 ←/→ 翻图）
+    if (document.body.classList.contains('lb-lock')) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var a = document.activeElement, tag = a ? a.tagName : '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    if (e.key === '['){ if (!prev) return; e.preventDefault(); location.href = prev; }
+    if (e.key === ']'){ if (!next) return; e.preventDefault(); location.href = next; }
+  });
+})();
+
+/* 滚动方向感应：下滚把顶栏收起来（读正文时零遮挡），上滚 / 回到顶部立刻回来。
+   与总览页同一套手感。顶栏内有焦点时（正在搜索 / 选日期）不收起，
+   否则主人正打字顶栏却滑走了。 */
+(function(){
+  var top = document.querySelector('header.top');
+  if (!top) return;
+  var lastY = window.pageYOffset || 0, ticking = false;
+  function inTop(){
+    var a = document.activeElement;
+    return !!(a && top.contains(a));
+  }
+  window.addEventListener('scroll', function(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      var y = window.pageYOffset || 0, dy = y - lastY;
+      if (!inTop()){
+        if (dy > 4 && y > 160) top.classList.add('hide');
+        else if (dy < -4 || y <= 160) top.classList.remove('hide');
+      }
+      lastY = y;
+      ticking = false;
+    });
+  }, {passive:true});
+})();
+</script>
+</body>
+</html>
